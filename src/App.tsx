@@ -1,7 +1,25 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { NaverApi } from "./utils/HTTP";
 
 function App() {
   const [status, setLocation] = useState<null | string>(null);
+
+  const temp = async () => {
+    await NaverApi.get(`/map-reversegeocode`, {
+      method: "GET",
+      params: {
+        coords: "126.73,37.54",
+        orders: "admcode",
+        output: "json",
+      },
+    }).then((json) => {
+      console.log(json);
+    });
+  };
+  useEffect(() => {
+    temp();
+  }, []);
+
   function getLocation() {
     // Geolocation API 지원 여부 확인
     if ("geolocation" in navigator) {
@@ -16,9 +34,9 @@ function App() {
           setLocation(`위치 정보를 가져올 수 없습니다: ${error.message}`);
         },
         {
-          enableHighAccuracy: true, // 정확도 우선 모드
-          timeout: 10000, // 10초 이내에 응답 없으면 에러 발생
-          maximumAge: 0, // 항상 최신 위치 정보 수집
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
         }
       );
     } else {
