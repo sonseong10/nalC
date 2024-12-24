@@ -4,3 +4,8 @@ globalStyle("body", {
   margin: 0,
   padding: 0,
 });
+
+globalStyle("*", {
+  boxSizing: "border-box",
+  alignItems: "center",
+});
