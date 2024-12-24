@@ -12,7 +12,7 @@ const YO = 136; // 기1준점 Y좌표(GRID)
 
 // LCC DFS 좌표변환 ( code : "toXY"(위경도->좌표, v1:위도, v2:경도), "toLL"(좌표->위경도,v1:x, v2:y) )
 
-function dfs_xy_conv(code, v1, v2) {
+function dfs_xy_conv(code: "toXY" | "toLL", v1: number, v2: number) {
   const DEGRAD = Math.PI / 180.0;
   const RADDEG = 180.0 / Math.PI;
 
@@ -30,13 +30,13 @@ function dfs_xy_conv(code, v1, v2) {
   sf = (Math.pow(sf, sn) * Math.cos(slat1)) / sn;
   let ro = Math.tan(Math.PI * 0.25 + olat * 0.5);
   ro = (re * sf) / Math.pow(ro, sn);
-  const rs = {};
+  const rs: { lat?: number; lng?: number; x?: number; y?: number } = {};
+  let ra = Math.tan(Math.PI * 0.25 + v1 * DEGRAD * 0.5);
+  let theta = v2 * DEGRAD - olon;
   if (code == "toXY") {
     rs["lat"] = v1;
     rs["lng"] = v2;
-    var ra = Math.tan(Math.PI * 0.25 + v1 * DEGRAD * 0.5);
     ra = (re * sf) / Math.pow(ra, sn);
-    var theta = v2 * DEGRAD - olon;
     if (theta > Math.PI) theta -= 2.0 * Math.PI;
     if (theta < -Math.PI) theta += 2.0 * Math.PI;
     theta *= sn;
@@ -47,7 +47,8 @@ function dfs_xy_conv(code, v1, v2) {
     rs["y"] = v2;
     const xn = v1 - XO;
     const yn = ro - v2 + YO;
-    ra = Math.sqrt(xn * xn + yn * yn);
+    const ra = Math.sqrt(xn * xn + yn * yn);
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     if (sn < 0.0) -ra;
     let alat = Math.pow((re * sf) / ra, 1.0 / sn);
     alat = 2.0 * Math.atan(alat) - Math.PI * 0.5;
@@ -57,6 +58,7 @@ function dfs_xy_conv(code, v1, v2) {
     } else {
       if (Math.abs(yn) <= 0.0) {
         theta = Math.PI * 0.5;
+        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
         if (xn < 0.0) -theta;
       } else theta = Math.atan2(xn, yn);
     }

@@ -2,12 +2,15 @@ import { useEffect, useState } from "react";
 import { WeatherApi } from "./utils/HTTP";
 import moment from "moment";
 import dfs_xy_conv from "./utils/position";
+import { container } from "./styles/app.css.ts";
 
 function App() {
   const [status, setLocation] = useState<null | {
     longitude: number;
     latitude: number;
   }>(null);
+
+  const [toDayInfo, setToDayInfo] = useState<Array<any>>([]);
 
   // const initLoction = async () => {
   //   if (status) {
@@ -61,19 +64,19 @@ function App() {
       info.date = moment().subtract(1, "days").toString();
       info.time = "2300";
     } else if (moment(currentTime).isBetween("0215", "0515")) {
-      info.time = "0200";
+      info.time = "0100";
     } else if (moment(currentTime).isBetween("0515", "0815")) {
-      info.time = "0500";
+      info.time = "0400";
     } else if (moment(currentTime).isBetween("0815", "1115")) {
-      info.time = "0800";
+      info.time = "0700";
     } else if (moment(currentTime).isBetween("1115", "1415")) {
-      info.time = "1100";
+      info.time = "1000";
     } else if (moment(currentTime).isBetween("1415", "1715")) {
-      info.time = "1400";
+      info.time = "1300";
     } else if (moment(currentTime).isBetween("1715", "2015")) {
-      info.time = "1700";
+      info.time = "1600";
     } else if (moment(currentTime).isBetween("2015", "2315")) {
-      info.time = "2000";
+      info.time = "1900";
     } else {
       info.time = "2300";
     }
@@ -124,26 +127,80 @@ function App() {
         nx: rs.x,
         ny: rs.y,
       },
-    }).then((res) => console.log(res));
+    }).then((res) => {
+      const array = res.data.response.body.items.item
+        .map((data) => {
+          if (data.fcstTime === `1800`) {
+            return {
+              ...data,
+            };
+          }
+        })
+        .filter((e) => e);
+      setToDayInfo(array);
+    });
   };
 
   useEffect(() => {
     getLocation();
-    timeWeather();
+    nowWeather();
   }, [status?.latitude]);
 
   return (
-    <>
-      {status !== undefined ? (
-        <span>{status?.latitude + "," + status?.longitude}</span>
-      ) : (
-        <span>
-          현재 위치를 탐색 할 수 없습니다. 위치서비스를 활성화 하거나, 검색어를
-          입력해 주세요.
-        </span>
-      )}
-      <button onClick={getLocation}></button>
-    </>
+    <div className={container}>
+      <div>
+        <input placeholder="지역단체명까지 검색가능합니다." />
+        <button>검색</button>
+      </div>
+
+      <h2>
+        {moment().format("YYYY.MM.DD")}
+        <br /> oo동 오늘의 날씨
+      </h2>
+
+      <div>
+        {status ? (
+          <div>
+            {toDayInfo.length <= 0 ? (
+              <></>
+            ) : (
+              <div>
+                <p>
+                  {toDayInfo.map((e, index) =>
+                    e.category === "T1H" ? (
+                      <strong key={index}>{e.fcstValue}°C</strong>
+                    ) : (
+                      <></>
+                    )
+                  )}
+                </p>
+
+                <p>
+                  {toDayInfo.map((e, index) =>
+                    e.category === "RN1" ? (
+                      <span key={index}>{e.fcstValue}</span>
+                    ) : (
+                      <></>
+                    )
+                  )}
+                </p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <span>
+            현재 위치를 탐색 할 수 없습니다. 위치서비스를 활성화 하거나,
+            검색어를 입력해 주세요.
+          </span>
+        )}
+      </div>
+
+      <div>
+        <h2>시간별 날씨</h2>
+
+        <div></div>
+      </div>
+    </div>
   );
 }
 
