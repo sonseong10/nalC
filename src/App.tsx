@@ -1,20 +1,14 @@
 import { useEffect, useState } from "react";
-import {
-  container,
-  inputBox,
-  header,
-  flexRow,
-  searchBtn,
-} from "./styles/app.css.ts";
+import { container } from "./styles/app.css.ts";
 import NowWeather from "./components/now/now.tsx";
+import Header from "./components/layout/header.tsx";
+import Hourly from "./components/hourly/hourly.tsx";
 
 function App() {
   const [status, setLocation] = useState<null | {
     longitude: number;
     latitude: number;
   }>(null);
-
-  // const [toDayInfo, setToDayInfo] = useState<Array<any>>([]);
 
   // const initLoction = async () => {
   //   if (status) {
@@ -85,33 +79,18 @@ function App() {
 
   useEffect(() => {
     getLocation();
-  }, [status?.latitude]);
+  }, []);
 
   return (
     <>
-      <header className={header}>
-        <div>
-          <button>메뉴</button>
-        </div>
-
-        <div className={flexRow}>
-          <input
-            className={inputBox}
-            placeholder="지역검색 (ㅇㅇ시, ㅇㅇ구, ㅇㅇ동)"
-          />
-
-          <button className={searchBtn}>검색</button>
-        </div>
-      </header>
+      <Header />
 
       <div className={container}>
         <NowWeather status={status ? status : undefined} />
       </div>
 
       <div className={container}>
-        <h2>시간별 날씨</h2>
-
-        <div></div>
+        <Hourly />
       </div>
     </>
   );
