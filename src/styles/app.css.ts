@@ -14,6 +14,7 @@ export const header = style({
   padding: "4px 8px",
   maxWidth: "520px",
   margin: "0 auto",
+  borderBottom: "1px solid #ddd",
 });
 
 export const flexRow = style({
