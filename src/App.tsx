@@ -106,12 +106,12 @@ function App() {
 
       <div className={container}>
         <NowWeather status={status ? status : undefined} />
+      </div>
 
-        <div>
-          <h2>시간별 날씨</h2>
+      <div className={container}>
+        <h2>시간별 날씨</h2>
 
-          <div></div>
-        </div>
+        <div></div>
       </div>
     </>
   );

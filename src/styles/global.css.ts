@@ -7,5 +7,7 @@ globalStyle("body", {
 
 globalStyle("*", {
   boxSizing: "border-box",
-  alignItems: "center",
+  fontFamily: "Nanum Gothic, serif",
+  fontWeight: 400,
+  fontStyle: "normal",
 });
