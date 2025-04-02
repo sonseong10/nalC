@@ -46,7 +46,7 @@ function App() {
       <Header />
 
       <div className={container}>
-        <LocalPostion />
+        <LocalPostion status={status ? status : undefined} />
 
         <NowWeather status={status ? status : undefined} />
       </div>

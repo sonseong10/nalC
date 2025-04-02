@@ -26,7 +26,7 @@ const timePicker = () => {
   } else if (moment(currentTime).isBetween("1715", "2015")) {
     info.time = "1850";
   } else if (moment(currentTime).isBetween("2015", "2315")) {
-    info.time = "2000";
+    info.time = "2100";
   } else {
     info.time = "2400";
   }
