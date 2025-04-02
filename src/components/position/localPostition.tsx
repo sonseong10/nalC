@@ -37,18 +37,13 @@ function LocalPostion({ status }: RegionProps) {
   const [region, setRegion] = useState<object>({});
 
   function createSentence(): string {
-    // region 객체의 모든 area를 순회하며 name을 추출
-    const areaNames = Object.values(region) // region의 모든 값(Area 객체들)을 가져옴
+    const areaNames = Object.values(region)
       .filter((area) => area.name.trim() !== "" && area.name !== "kr")
-      .map((area) => area.name); // name만 추출
-
-    // area 이름들을 조합하여 문장 만들기
-    return `${areaNames.join(" > ")}`;
+      .map((area) => area.name);
+    return `${areaNames.join(" ")}`;
   }
 
   useEffect(() => {
-    console.log(status);
-
     if (status) {
       const fetchData = async () => {
         const data = await regionSearch(status);
