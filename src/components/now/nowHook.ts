@@ -3,33 +3,25 @@ import dfs_xy_conv from "../../utils/position";
 import { WeatherApi } from "../../utils/HTTP";
 import moment from "moment";
 
+function adjustMinutes(time: moment.Moment): string {
+  const minutes = time.minutes();
+
+  if (minutes >= 45) {
+    time.set("minutes", 30);
+  } else {
+    time.subtract(1, "hour").set("minutes", 30);
+  }
+
+  return time.format("HHmm");
+}
+
 const timePicker = () => {
   const info: { time: undefined | string; date: undefined | string } = {
     time: undefined,
     date: undefined,
   };
-  const currentTime = moment().format("HHmm");
   info.date = moment().format("YYYYMMDD").toString();
-  if (moment(currentTime).isBetween("1200", "0215")) {
-    info.date = moment().subtract(1, "days").toString();
-    info.time = "2300";
-  } else if (moment(currentTime).isBetween("0215", "0515")) {
-    info.time = "0200";
-  } else if (moment(currentTime).isBetween("0515", "0815")) {
-    info.time = "0500";
-  } else if (moment(currentTime).isBetween("0815", "1115")) {
-    info.time = "0800";
-  } else if (moment(currentTime).isBetween("1115", "1415")) {
-    info.time = "1300";
-  } else if (moment(currentTime).isBetween("1415", "1715")) {
-    info.time = "1730";
-  } else if (moment(currentTime).isBetween("1715", "2015")) {
-    info.time = "1850";
-  } else if (moment(currentTime).isBetween("2015", "2315")) {
-    info.time = "2100";
-  } else {
-    info.time = "2400";
-  }
+  info.time = adjustMinutes(moment());
 
   return info;
 };
