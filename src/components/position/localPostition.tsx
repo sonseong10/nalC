@@ -57,14 +57,14 @@ function LocalPostion({ status }: RegionProps) {
 
   return (
     <div>
-      <h2>
-        {moment().format("YYYY.MM.DD")}
-        <br />
-        {createSentence()}
-      </h2>
+      <strong>{moment().format("YYYY.MM.DD")}</strong>
 
       <div>
-        <button>구독</button>
+        <h2>{createSentence()}</h2>
+
+        <div>
+          <button>구독</button>
+        </div>
       </div>
     </div>
   );

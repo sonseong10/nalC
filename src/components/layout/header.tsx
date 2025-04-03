@@ -1,19 +1,25 @@
-import { inputBox, header, flexRow, searchBtn } from "../../styles/app.css";
+import { header, flexRow } from "../../styles/app.css";
+import {
+  searchButton,
+  hambugerMenu,
+  inputBox,
+  searchBar,
+} from "./header.css.ts";
 
 function Header() {
   return (
     <header className={header}>
       <div>
-        <button>메뉴</button>
+        <button className={hambugerMenu} aria-label="메뉴"></button>
       </div>
 
-      <div className={flexRow}>
+      <div className={`${flexRow} ${searchBar}`}>
         <input
           className={inputBox}
           placeholder="지역검색 (ㅇㅇ시, ㅇㅇ구, ㅇㅇ동)"
         />
 
-        <button className={searchBtn}>검색</button>
+        <button className={searchButton} aria-label="검색"></button>
       </div>
     </header>
   );
