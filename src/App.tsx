@@ -3,7 +3,6 @@ import { container } from "./styles/app.css.ts";
 import NowWeather from "./components/now/now.tsx";
 import Header from "./components/layout/header.tsx";
 import LocalPostion from "./components/position/localPostition.tsx";
-// import Hourly from "./components/hourly/hourly.tsx";
 
 function App() {
   const [status, setLocation] = useState<null | {
@@ -23,17 +22,30 @@ function App() {
           });
         },
         (error) => {
-          alert(error);
-          setLocation(null);
-        }, //
+          switch (error.code) {
+            case 1:
+              console.warn("사용자가 거부");
+              break;
+            case 2:
+              console.error("시스템오류");
+              break;
+            case 3:
+              console.warn("타임아웃");
+              break;
+          }
+          setLocation({
+            latitude: 37.575,
+            longitude: 126.973,
+          }); // 경북궁 좌표;
+        },
         {
-          enableHighAccuracy: true,
+          enableHighAccuracy: false,
           timeout: 10000,
-          maximumAge: 0,
+          maximumAge: 30000,
         }
       );
     } else {
-      setLocation(null);
+      console.error("위치서비스 브라우저 미지원");
     }
   }
 
