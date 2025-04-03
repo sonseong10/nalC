@@ -11,3 +11,7 @@ globalStyle("*", {
   fontWeight: 400,
   fontStyle: "normal",
 });
+
+globalStyle("figure", {
+  margin: 0,
+});

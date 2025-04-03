@@ -1,6 +1,13 @@
 import moment from "moment";
 import { NaverApi } from "../../utils/HTTP";
 import { useEffect, useState } from "react";
+import { flexRow } from "../../styles/app.css";
+import {
+  regionGroup,
+  bookmarkButton,
+  todayInfo,
+  regionTextGroup,
+} from "./region.css";
 
 interface RegionProps {
   status?: {
@@ -56,14 +63,14 @@ function LocalPostion({ status }: RegionProps) {
   }, [status]);
 
   return (
-    <div>
-      <strong>{moment().format("YYYY.MM.DD")}</strong>
+    <div className={regionGroup}>
+      <strong className={todayInfo}>{moment().format("YYYY.MM.DD")}</strong>
 
-      <div>
+      <div className={`${flexRow} ${regionTextGroup}`}>
         <h2>{createSentence()}</h2>
 
         <div>
-          <button>구독</button>
+          <button className={bookmarkButton} aria-label="미구독"></button>
         </div>
       </div>
     </div>

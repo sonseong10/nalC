@@ -1,5 +1,15 @@
 import moment from "moment";
 import { useNowWeatherInfo } from "./nowHook";
+import {
+  weatherGroup,
+  tmp,
+  infoGroup,
+  logo,
+  infoDesc,
+  weatherImage,
+} from "./now.css";
+import { flexRow } from "../../styles/app.css";
+import logoImg from "../../assets/koreaMeteorological.png";
 
 interface NowWeatherProps {
   status?: {
@@ -10,38 +20,56 @@ interface NowWeatherProps {
 
 function PositionWeather({ status }: NowWeatherProps) {
   const { toDayInfo } = useNowWeatherInfo(status);
+
+  console.log(toDayInfo);
+
   return (
-    <div>
+    <>
       {toDayInfo?.length <= 0 ? (
         <span>정보 불러오는 중</span>
       ) : (
         <div>
-          <strong>
+          <div>
+            <div className={weatherGroup}>
+              <img
+                className={weatherImage}
+                src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
+                alt="맑음"
+              />
+            </div>
             {toDayInfo?.map(
               (e, index) =>
                 e.category === "T1H" && (
-                  <strong key={index}>{e.fcstValue}°C</strong>
+                  <strong key={index} className={tmp}>
+                    {e.fcstValue}°
+                  </strong>
                 )
             )}
-          </strong>
+          </div>
 
-          <p>
-            {toDayInfo?.map(
-              (e, index) =>
-                e.category === "RN1" && <span key={index}>{e.fcstValue}</span>
-            )}
-          </p>
-
-          <p>
-            {`업데이트시간: ${moment(toDayInfo?.[0].baseDate).format(
-              "YYYY.MM.DD"
-            )} ${toDayInfo?.[0].baseTime.replace(/(\d{2})(\d{2})/, "$1:$2")}`}
-          </p>
-
-          <p>정보제공: 기상청</p>
+          <div>
+            <dl className={infoGroup}>
+              <div className={flexRow}>
+                <dt>업데이트시간</dt>
+                <dd className={infoDesc}>
+                  {moment(toDayInfo?.[0].baseDate).format("YYYY.MM.DD.")}
+                  {toDayInfo?.[0].baseTime.replace(/(\d{2})(\d{2})/, "$1:$2")}
+                </dd>
+              </div>
+              <div className={flexRow}>
+                <dt>정보제공</dt>
+                <dd className={infoDesc}>
+                  <figure>
+                    <img className={logo} src={logoImg} alt="한국기상청로고" />
+                    <figcaption></figcaption>
+                  </figure>
+                </dd>
+              </div>
+            </dl>
+          </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
