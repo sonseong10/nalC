@@ -3,6 +3,7 @@ import { container } from "./styles/app.css.ts";
 import NowWeather from "./components/now/now.tsx";
 import Header from "./components/layout/header.tsx";
 import LocalPostion from "./components/position/localPostition.tsx";
+import Hourly from "./components/hourly/hourly.tsx";
 
 function App() {
   const [status, setLocation] = useState<null | {
@@ -63,9 +64,9 @@ function App() {
         <NowWeather status={status ? status : undefined} />
       </div>
 
-      {/* <div className={container}>
-        <Hourly />
-      </div> */}
+      <div className={container}>
+        <Hourly status={status ? status : undefined} />
+      </div>
     </>
   );
 }
