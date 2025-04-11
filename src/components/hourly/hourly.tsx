@@ -1,9 +1,18 @@
 import moment from "moment";
-import { flexRow } from "../../styles/app.css";
 import { WeatherApi } from "../../utils/HTTP";
 import { Fragment, useEffect, useState } from "react";
 import dfs_xy_conv from "../../utils/position";
-import { card } from "./hourly.css";
+import {
+  card,
+  contentsBox,
+  FontBase,
+  hourlyGroup,
+  hourlyKeyGroup,
+  keyOption,
+  keyOptionGroup,
+  vec,
+  weatherImg,
+} from "./hourly.css";
 
 function adjustMinutes(time: moment.Moment): string {
   const minutes = time.minutes();
@@ -41,10 +50,10 @@ const todayWeatherAPI = async (status?: {
   const rs = dfs_xy_conv("toXY", status.latitude, status.longitude);
   const params = {
     pageNo: 1,
-    numOfRows: 288,
+    numOfRows: 289,
     dataType: "JSON",
     base_date: date,
-    base_time: "1400",
+    base_time: "1700",
     nx: rs.x,
     ny: rs.y,
   };
@@ -68,8 +77,21 @@ const todayWeatherAPI = async (status?: {
           ny: number;
         }[]
       > = [];
-      for (let i = 0; i < res.data.response.body?.items?.item.length; i += 12) {
-        grouped.push(res.data.response.body?.items?.item.slice(i, i + 12));
+      const newArray = (
+        res.data.response.body?.items?.item as {
+          baseDate: string;
+          baseTime: string;
+          category: string;
+          fcstDate: string;
+          fcstTime: string;
+          fcstValue: string;
+          nx: number;
+          ny: number;
+        }[]
+      ).filter((i) => i.category !== "TMX");
+
+      for (let i = 0; i < newArray.length; i += 12) {
+        grouped.push(newArray.slice(i, i + 12));
       }
 
       return grouped;
@@ -132,44 +154,84 @@ function Hourly({ status }: NowWeatherProps) {
     <>
       <h2>시간별 날씨</h2>
 
-      <div className={flexRow}>
-        {toDayInfo.map((info, index) => (
-          <div key={index} className={card}>
-            <span>{info[0].fcstTime.substring(0, 2)}시</span>
-            {info.map(({ category, fcstValue }, index) => {
-              return (
-                <Fragment key={index}>
-                  {category === "TMP" && <strong>{fcstValue}°</strong>}
+      <div className={contentsBox}>
+        <div className={hourlyKeyGroup}>
+          <span>오늘</span>
 
+          <div className={keyOptionGroup}>
+            <span className={keyOption}>강수량 mm</span>
+            <span className={keyOption}>습도 % </span>
+            <span className={keyOption}> 바람 m/s</span>
+          </div>
+        </div>
+        <div className={hourlyGroup}>
+          {toDayInfo.map((info, index) => (
+            <div key={index} className={card}>
+              <span className={FontBase}>
+                {info[0].fcstTime.substring(0, 2)}시
+              </span>
+              {info.map(({ category }) => (
+                <Fragment key={category}>
                   {category === "SKY" && (
                     <img
-                      src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt2.svg"
+                      className={weatherImg}
+                      src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
                       alt="맑음"
                     />
                   )}
-                  {category === "POP" && (
-                    <span>
-                      {Number(fcstValue) <= 0 ? "-" : `${fcstValue}%`}
+                </Fragment>
+              ))}
+              {info.map(({ category, fcstValue }) => {
+                return (
+                  <Fragment key={category}>
+                    {category === "TMP" && (
+                      <strong className={FontBase}>{fcstValue}°</strong>
+                    )}
+
+                    {category === "POP" && (
+                      <span className={FontBase}>
+                        {Number(fcstValue) <= 0 ? "-" : `${fcstValue}%`}
+                      </span>
+                    )}
+                    {category === "PCP" && (
+                      <span className={FontBase}>
+                        {fcstValue === "강수없음"
+                          ? "0"
+                          : `${fcstValue.substring(0, 1)}`}
+                      </span>
+                    )}
+                    {category === "REH" && (
+                      <span className={FontBase}>{fcstValue}</span>
+                    )}
+                  </Fragment>
+                );
+              })}
+
+              {info.map(
+                ({ category, fcstValue }, index) =>
+                  category === "VEC" && (
+                    <div key={index}>
+                      <img
+                        style={{ transform: `rotate(${fcstValue}deg)` }}
+                        className={vec}
+                        src="https://www.weather.go.kr/w/resources/icon/ic_wd_48x.png"
+                        alt=""
+                      />
+                    </div>
+                  )
+              )}
+              {info.map(({ category, fcstValue }, index) => (
+                <Fragment key={index}>
+                  {category === "WSD" && (
+                    <span className={FontBase}>
+                      {Math.round(Number(fcstValue))}
                     </span>
                   )}
-                  {category === "REH" && <span>{fcstValue}</span>}
                 </Fragment>
-              );
-            })}
-
-            {info.map(
-              ({ category, fcstValue }, index) =>
-                (category === "WSD" || category === "VEC") && (
-                  <div key={index}>
-                    <span>{category === "VEC" && fcstValue}</span>
-                    <span>
-                      {category === "WSD" && Math.round(Number(fcstValue))}
-                    </span>
-                  </div>
-                )
-            )}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
