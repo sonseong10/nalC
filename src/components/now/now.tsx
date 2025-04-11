@@ -21,8 +21,6 @@ interface NowWeatherProps {
 function PositionWeather({ status }: NowWeatherProps) {
   const { toDayInfo } = useNowWeatherInfo(status);
 
-  console.log(toDayInfo);
-
   return (
     <>
       {toDayInfo?.length <= 0 ? (
