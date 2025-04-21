@@ -166,8 +166,6 @@ interface NowWeatherProps {
 function Hourly({ status }: NowWeatherProps) {
   const { toDayInfo } = useTodayWeatherInfo(status);
 
-  console.log(toDayInfo);
-
   return (
     <>
       <h2>시간별 날씨</h2>
