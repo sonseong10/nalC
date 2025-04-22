@@ -2,7 +2,7 @@ import { style } from "@vanilla-extract/css";
 import SVG from "../../styles/icon";
 
 const regionGroup = style({
-  padding: "24px 0 ",
+  paddingTop: "24px",
 });
 
 const todayInfo = style({

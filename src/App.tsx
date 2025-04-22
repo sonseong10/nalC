@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { container } from "./styles/app.css.ts";
+import { container, flexRow, footer, main } from "./styles/app.css.ts";
 import NowWeather from "./components/now/now.tsx";
 import Header from "./components/layout/header.tsx";
 import LocalPostion from "./components/position/localPostition.tsx";
@@ -56,7 +56,7 @@ function App() {
   }, []);
 
   return (
-    <>
+    <main className={main}>
       <Header />
 
       <div className={container}>
@@ -72,7 +72,22 @@ function App() {
       <div className={container}>
         <Sunset />
       </div>
-    </>
+
+      <footer className={footer}>
+        <dl className={flexRow}>
+          <dt>제작자</dt>
+          <dd>
+            <a href="https://github.com/sonseong10" target="_blank">
+              Son seongyeol
+            </a>
+          </dd>
+          <dt>제작기간</dt>
+          <dd>
+            <span>2025 ~</span>
+          </dd>
+        </dl>
+      </footer>
+    </main>
   );
 }
 

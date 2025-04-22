@@ -165,6 +165,7 @@ interface NowWeatherProps {
 
 function Hourly({ status }: NowWeatherProps) {
   const { toDayInfo } = useTodayWeatherInfo(status);
+  const { baseDate, baseTime } = getKmaBaseDateTime();
 
   return (
     <>
@@ -184,75 +185,85 @@ function Hourly({ status }: NowWeatherProps) {
             </div>
           </div>
           <div className={hourlyGroup}>
-            {toDayInfo.map((info, index) => (
-              <div key={index} className={card}>
-                <span className={FontBase}>
-                  {info[0].fcstTime.substring(0, 2)}시
-                </span>
-                {info.map(({ category }) => (
-                  <Fragment key={category}>
-                    {category === "SKY" && (
-                      <img
-                        className={weatherImg}
-                        src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
-                        alt="맑음"
-                      />
-                    )}
-                  </Fragment>
-                ))}
-                {info.map(({ category, fcstValue }) => {
-                  return (
+            {toDayInfo
+              .filter((item) => item.length === 12)
+              .map((info, index) => (
+                <div key={index} className={card}>
+                  <span className={FontBase}>
+                    {info[0].fcstTime.substring(0, 2)}시
+                  </span>
+                  {info.map(({ category }) => (
                     <Fragment key={category}>
-                      {category === "TMP" && (
-                        <strong className={FontBase}>{fcstValue}°</strong>
-                      )}
-
-                      {category === "POP" && (
-                        <span className={FontBase}>
-                          {Number(fcstValue) <= 0 ? "-" : `${fcstValue}%`}
-                        </span>
-                      )}
-                      {category === "PCP" && (
-                        <span className={FontBase}>
-                          {fcstValue === "강수없음"
-                            ? "0"
-                            : `${fcstValue.substring(0, 1)}`}
-                        </span>
-                      )}
-                      {category === "REH" && (
-                        <span className={FontBase}>{fcstValue}</span>
+                      {category === "SKY" && (
+                        <img
+                          className={weatherImg}
+                          src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
+                          alt="맑음"
+                        />
                       )}
                     </Fragment>
-                  );
-                })}
+                  ))}
+                  {info.map(({ category, fcstValue }) => {
+                    return (
+                      <Fragment key={category}>
+                        {category === "TMP" && (
+                          <strong className={FontBase}>{fcstValue}°</strong>
+                        )}
 
-                {info.map(
-                  ({ category, fcstValue }, index) =>
-                    category === "VEC" && (
-                      <div key={index}>
-                        <img
-                          style={{ transform: `rotate(${fcstValue}deg)` }}
-                          className={vec}
-                          src="https://www.weather.go.kr/w/resources/icon/ic_wd_48x.png"
-                          alt=""
-                        />
-                      </div>
-                    )
-                )}
-                {info.map(({ category, fcstValue }, index) => (
-                  <Fragment key={index}>
-                    {category === "WSD" && (
-                      <span className={FontBase}>
-                        {Math.round(Number(fcstValue))}
-                      </span>
-                    )}
-                  </Fragment>
-                ))}
-              </div>
-            ))}
+                        {category === "POP" && (
+                          <span className={FontBase}>
+                            {Number(fcstValue) <= 0 ? "-" : `${fcstValue}%`}
+                          </span>
+                        )}
+                        {category === "PCP" && (
+                          <span className={FontBase}>
+                            {fcstValue === "강수없음"
+                              ? "0"
+                              : `${fcstValue.substring(0, 1)}`}
+                          </span>
+                        )}
+                        {category === "REH" && (
+                          <span className={FontBase}>{fcstValue}</span>
+                        )}
+                      </Fragment>
+                    );
+                  })}
+
+                  {info.map(
+                    ({ category, fcstValue }, index) =>
+                      category === "VEC" && (
+                        <div key={index}>
+                          <img
+                            style={{ transform: `rotate(${fcstValue}deg)` }}
+                            className={vec}
+                            src="https://www.weather.go.kr/w/resources/icon/ic_wd_48x.png"
+                            alt=""
+                          />
+                        </div>
+                      )
+                  )}
+                  {info.map(({ category, fcstValue }, index) => (
+                    <Fragment key={index}>
+                      {category === "WSD" && (
+                        <span className={FontBase}>
+                          {Math.round(Number(fcstValue))}
+                        </span>
+                      )}
+                    </Fragment>
+                  ))}
+                </div>
+              ))}
           </div>
         </div>
       )}
+
+      <p className="offer_area">
+        <a href="https://www.weather.go.kr/w/index.do" target="_blank">
+          기상청
+        </a>
+        발표 업데이트 시간 {moment(baseDate).format("YYYY.MM.DD.")}
+        {baseTime.replace("00", ":00")}
+      </p>
     </>
   );
 }

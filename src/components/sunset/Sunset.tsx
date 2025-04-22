@@ -45,6 +45,13 @@ export default function Sunset() {
       <h2>일출일몰</h2>
 
       <SunsetInfo />
+
+      <p className="offer_area">
+        <a href="https://www.kasi.re.kr/" target="_blank">
+          한국천문연구원
+        </a>
+        발표
+      </p>
     </>
   );
 }

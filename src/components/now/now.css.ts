@@ -9,10 +9,10 @@ const weatherImage = style({
   width: "96px",
   top: "-16px",
   left: "32%",
-  zIndex: "-1",
 });
 
 const tmp = style({
+  position: "relative",
   display: "inline-block",
   width: "100%",
   textAlign: "center",
@@ -25,6 +25,7 @@ const infoGroup = style({
   display: "flex",
   justifyContent: "start",
   alignItems: "center",
+  marginTop: "48px",
   color: "#767678",
   fontSize: "12px",
 });
