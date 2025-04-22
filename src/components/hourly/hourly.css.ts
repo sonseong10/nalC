@@ -10,7 +10,7 @@ const hourlyKeyGroup = style({
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "center",
-  marginBottom: "14px",
+  paddingBottom: "20px",
   borderRight: "1px solid #ddd",
   flex: "0 0 80px",
 });
@@ -23,7 +23,7 @@ const keyOptionGroup = style({
 });
 
 const keyOption = style({
-  margin: "8px 0",
+  margin: "10px 0",
 });
 
 const hourlyGroup = style({
@@ -41,9 +41,15 @@ const card = style({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center",
+  justifyContent: "flex-start",
   flex: "0 0 100px",
-  borderRight: "1px solid #ddd",
+  height: "218px",
+
+  selectors: {
+    "&:not(:last-child)": {
+      borderRight: "1px solid #ddd",
+    },
+  },
 });
 
 const weatherImg = style({
@@ -63,6 +69,14 @@ const vec = style({
   width: "16px",
 });
 
+const tomorrow = style({
+  color: "#7a59f1",
+});
+
+const afterTomorrow = style({
+  color: "#45c1e0",
+});
+
 export {
   contentsBox,
   hourlyKeyGroup,
@@ -73,4 +87,6 @@ export {
   weatherImg,
   FontBase,
   vec,
+  tomorrow,
+  afterTomorrow,
 };

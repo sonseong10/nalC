@@ -1,6 +1,6 @@
 import moment from "moment";
+import { useEffect, useState } from "react";
 import { WeatherApi } from "../../utils/HTTP";
-import { Fragment, useEffect, useState } from "react";
 import dfs_xy_conv from "../../utils/position";
 import {
   card,
@@ -12,15 +12,35 @@ import {
   keyOptionGroup,
   vec,
   weatherImg,
+  tomorrow,
+  afterTomorrow,
 } from "./hourly.css";
 
-const getKmaBaseDateTime = (): {
+interface ForecastItem {
   baseDate: string;
   baseTime: string;
-} => {
-  const now = moment();
+  category: string;
+  fcstDate: string;
+  fcstTime: string;
+  fcstValue: string;
+  nx: number;
+  ny: number;
+}
 
-  // 예보 발표 시간들 (역순 = 최근 발표부터 검사)
+interface ForecastGroup extends ForecastItem {
+  dayLabel: "오늘" | "내일" | "모레";
+  timeLabel: string;
+}
+
+interface NowWeatherProps {
+  status?: {
+    latitude: number;
+    longitude: number;
+  };
+}
+
+const getKmaBaseDateTime = (): { baseDate: string; baseTime: string } => {
+  const now = moment();
   const baseTimes = [
     "2300",
     "2000",
@@ -33,9 +53,8 @@ const getKmaBaseDateTime = (): {
   ];
 
   for (const time of baseTimes) {
-    const hour = parseInt(time.substring(0, 2), 10);
-    const minute = 10; // 기상청 발표 반영 예상 시간
-
+    const hour = parseInt(time.slice(0, 2), 10);
+    const minute = 10;
     const baseMoment = moment().set({ hour, minute, second: 0 });
 
     if (now.isSameOrAfter(baseMoment)) {
@@ -46,29 +65,22 @@ const getKmaBaseDateTime = (): {
     }
   }
 
-  // 모두 해당되지 않으면 전날 23:00 기준
-  const yesterday = now.clone().subtract(1, "day");
-
   return {
-    baseDate: yesterday.format("YYYYMMDD"),
+    baseDate: moment().subtract(1, "day").format("YYYYMMDD"),
     baseTime: "2300",
   };
 };
 
-const todayWeatherAPI = async (status?: {
+const fetchWeatherData = async (status: {
   latitude: number;
   longitude: number;
 }) => {
-  if (!status) {
-    return;
-  }
-
   const { baseDate, baseTime } = getKmaBaseDateTime();
-
   const rs = dfs_xy_conv("toXY", status.latitude, status.longitude);
+
   const params = {
     pageNo: 1,
-    numOfRows: 289,
+    numOfRows: 650,
     dataType: "JSON",
     base_date: baseDate,
     base_time: baseTime,
@@ -76,193 +88,188 @@ const todayWeatherAPI = async (status?: {
     ny: rs.y,
   };
 
-  const data = await WeatherApi.get(
-    `/1360000/VilageFcstInfoService_2.0/getVilageFcst`,
-    {
-      params,
+  try {
+    const res = await WeatherApi.get(
+      `/1360000/VilageFcstInfoService_2.0/getVilageFcst`,
+      { params }
+    );
+
+    const rawItems = res.data.response.body?.items?.item as ForecastItem[];
+
+    const now = moment();
+    const filtered = rawItems
+      .filter((i) => !["TMX", "TMN"].includes(i.category))
+      .filter((i) => {
+        return (
+          i.fcstDate > now.format("YYYYMMDD") ||
+          Number(i.fcstTime) > Number(now.format("HHmm"))
+        );
+      });
+
+    // 12개씩 묶기 (1시간치)
+    const grouped: ForecastItem[][] = [];
+    for (let i = 0; i < filtered.length; i += 12) {
+      grouped.push(filtered.slice(i, i + 12));
     }
-  )
-    .then((res) => {
-      const grouped: Array<
-        {
-          baseDate: string;
-          baseTime: string;
-          category: string;
-          fcstDate: string;
-          fcstTime: string;
-          fcstValue: string;
-          nx: number;
-          ny: number;
-        }[]
-      > = [];
-      const newArray = (
-        res.data.response.body?.items?.item as {
-          baseDate: string;
-          baseTime: string;
-          category: string;
-          fcstDate: string;
-          fcstTime: string;
-          fcstValue: string;
-          nx: number;
-          ny: number;
-        }[]
-      ).filter((i) => i.category !== "TMX");
 
-      for (let i = 0; i < newArray.length; i += 12) {
-        grouped.push(newArray.slice(i, i + 12));
-      }
+    const today = moment();
+    const tomorrow = moment().add(1, "day");
+    const dayAfter = moment().add(2, "day");
 
-      return grouped;
-    })
-    .catch((error) => {
-      console.error(error);
-      return [];
-    });
+    const addDayLabel = (date: string): ForecastGroup["dayLabel"] => {
+      const d = moment(date, "YYYYMMDD");
+      if (d.isSame(today, "day")) return "오늘";
+      if (d.isSame(tomorrow, "day")) return "내일";
+      if (d.isSame(dayAfter, "day")) return "모레";
+      return "오늘";
+    };
 
-  return data;
+    return grouped
+      .filter((group) => group.length === 12)
+      .map((group) =>
+        group.map((item) => ({
+          ...item,
+          dayLabel: addDayLabel(item.fcstDate),
+          timeLabel: `${item.fcstTime.slice(0, 2)}시`,
+        }))
+      );
+  } catch (error) {
+    console.error("기상청 API 오류:", error);
+    return [];
+  }
 };
 
-const useTodayWeatherInfo = (status?: {
-  latitude: number;
-  longitude: number;
-}) => {
-  const [toDayInfo, setToDayInfo] = useState<
-    Array<
-      {
-        baseDate: string;
-        baseTime: string;
-        category: string;
-        fcstDate: string;
-        fcstTime: string;
-        fcstValue: string;
-        nx: number;
-        ny: number;
-      }[]
-    >
-  >([]);
+const useWeatherData = (status?: { latitude: number; longitude: number }) => {
+  const [weatherData, setWeatherData] = useState<ForecastGroup[][]>([]);
 
   useEffect(() => {
     if (status) {
-      const fetchAndSetData = async () => {
-        const data = await todayWeatherAPI(status);
-        if (data) {
-          setToDayInfo(data);
-        }
-      };
-      fetchAndSetData();
+      fetchWeatherData(status).then((data) => data && setWeatherData(data));
     }
   }, [status]);
 
-  return { toDayInfo };
+  return { weatherData };
 };
 
-interface NowWeatherProps {
-  status?: {
-    latitude: number;
-    longitude: number;
-  };
-}
-
 function Hourly({ status }: NowWeatherProps) {
-  const { toDayInfo } = useTodayWeatherInfo(status);
+  const { weatherData } = useWeatherData(status);
   const { baseDate, baseTime } = getKmaBaseDateTime();
 
   return (
     <>
       <h2>시간별 날씨</h2>
 
-      {toDayInfo.length <= 0 ? (
+      {weatherData.length === 0 ? (
         <>로딩중입니다.</>
       ) : (
         <div className={contentsBox}>
           <div className={hourlyKeyGroup}>
             <span>오늘</span>
-
             <div className={keyOptionGroup}>
-              <span className={keyOption}>강수량 mm</span>
-              <span className={keyOption}>습도 % </span>
-              <span className={keyOption}> 바람 m/s</span>
+              <span className={keyOption}>강수 mm</span>
+              <span className={keyOption}>습도 %</span>
+              <span className={keyOption}>바람 m/s</span>
             </div>
           </div>
           <div className={hourlyGroup}>
-            {toDayInfo
-              .filter((item) => item.length === 12)
-              .map((info, index) => (
+            {weatherData.map((group, index) => {
+              const timeLabel = group[0].timeLabel;
+              const dayLabel = group[0].dayLabel;
+              const categoryMap = new Map(
+                group.map((item) => [item.category, item])
+              );
+              return (
                 <div key={index} className={card}>
-                  <span className={FontBase}>
-                    {info[0].fcstTime.substring(0, 2)}시
+                  <span
+                    className={`${FontBase} ${
+                      dayLabel === "모레"
+                        ? afterTomorrow
+                        : dayLabel === "내일"
+                        ? tomorrow
+                        : null
+                    }`}
+                  >
+                    {timeLabel}
                   </span>
-                  {info.map(({ category }) => (
-                    <Fragment key={category}>
-                      {category === "SKY" && (
-                        <img
-                          className={weatherImg}
-                          src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
-                          alt="맑음"
-                        />
-                      )}
-                    </Fragment>
-                  ))}
-                  {info.map(({ category, fcstValue }) => {
-                    return (
-                      <Fragment key={category}>
-                        {category === "TMP" && (
-                          <strong className={FontBase}>{fcstValue}°</strong>
-                        )}
 
-                        {category === "POP" && (
-                          <span className={FontBase}>
-                            {Number(fcstValue) <= 0 ? "-" : `${fcstValue}%`}
-                          </span>
-                        )}
-                        {category === "PCP" && (
-                          <span className={FontBase}>
-                            {fcstValue === "강수없음"
-                              ? "0"
-                              : `${fcstValue.substring(0, 1)}`}
-                          </span>
-                        )}
-                        {category === "REH" && (
-                          <span className={FontBase}>{fcstValue}</span>
-                        )}
-                      </Fragment>
-                    );
-                  })}
-
-                  {info.map(
-                    ({ category, fcstValue }, index) =>
-                      category === "VEC" && (
-                        <div key={index}>
-                          <img
-                            style={{ transform: `rotate(${fcstValue}deg)` }}
-                            className={vec}
-                            src="https://www.weather.go.kr/w/resources/icon/ic_wd_48x.png"
-                            alt=""
-                          />
-                        </div>
-                      )
+                  {/* SKY */}
+                  {categoryMap.has("SKY") && (
+                    <img
+                      className={weatherImg}
+                      src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
+                      alt="날씨"
+                    />
                   )}
-                  {info.map(({ category, fcstValue }, index) => (
-                    <Fragment key={index}>
-                      {category === "WSD" && (
-                        <span className={FontBase}>
-                          {Math.round(Number(fcstValue))}
-                        </span>
-                      )}
-                    </Fragment>
-                  ))}
+
+                  {/* TMP */}
+                  {categoryMap.has("TMP") && (
+                    <strong className={FontBase}>
+                      {`${categoryMap.get("TMP")!.fcstValue}°`}
+                    </strong>
+                  )}
+
+                  {/* POP */}
+                  {categoryMap.has("POP") && (
+                    <span className={FontBase}>
+                      {Number(categoryMap.get("POP")!.fcstValue) <= 0
+                        ? "-"
+                        : `${categoryMap.get("POP")!.fcstValue}%`}
+                    </span>
+                  )}
+
+                  {/* PCP */}
+                  {categoryMap.has("PCP") && (
+                    <span className={FontBase}>
+                      {categoryMap.get("PCP")!.fcstValue === "강수없음"
+                        ? "0"
+                        : categoryMap.get("PCP")!.fcstValue}
+                    </span>
+                  )}
+
+                  {/* REH */}
+                  {categoryMap.has("REH") && (
+                    <span className={FontBase}>
+                      {categoryMap.get("REH")!.fcstValue}
+                    </span>
+                  )}
+
+                  {/* WSD */}
+                  {categoryMap.has("WSD") && (
+                    <span className={FontBase}>
+                      {Math.round(Number(categoryMap.get("WSD")!.fcstValue))}
+                    </span>
+                  )}
+
+                  {/* VEC */}
+                  {categoryMap.has("VEC") && (
+                    <img
+                      className={vec}
+                      src="https://www.weather.go.kr/w/resources/icon/ic_wd_48x.png"
+                      alt="바람방향"
+                      style={{
+                        transform: `rotate(${
+                          categoryMap.get("VEC")!.fcstValue
+                        }deg)`,
+                      }}
+                    />
+                  )}
                 </div>
-              ))}
+              );
+            })}
           </div>
         </div>
       )}
 
       <p className="offer_area">
-        <a href="https://www.weather.go.kr/w/index.do" target="_blank">
+        <a
+          href="https://www.weather.go.kr/w/index.do"
+          target="_blank"
+          rel="noreferrer"
+        >
           기상청
         </a>
-        발표 업데이트 시간 {moment(baseDate).format("YYYY.MM.DD.")}
-        {baseTime.replace("00", ":00")}
+        발표 기준 {moment(baseDate).format("YYYY.MM.DD.")}{" "}
+        {baseTime.slice(0, 2)}:00
       </p>
     </>
   );
