@@ -6,7 +6,7 @@ import LocalPostion from "./components/position/localPostition.tsx";
 import Hourly from "./components/hourly/hourly.tsx";
 import Sunset from "./components/sunset/Sunset.tsx";
 
-function App() {
+const useInitLocation = () => {
   const [status, setLocation] = useState<null | {
     longitude: number;
     latitude: number;
@@ -54,6 +54,12 @@ function App() {
   useEffect(() => {
     getLocation();
   }, []);
+
+  return { status };
+};
+
+function App() {
+  const { status } = useInitLocation();
 
   return (
     <main className={main}>

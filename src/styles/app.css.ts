@@ -1,6 +1,7 @@
 import { style } from "@vanilla-extract/css";
 
 const main = style({
+  minHeight: "100vh",
   backgroundColor: "#ededed",
 });
 
@@ -10,17 +11,6 @@ const container = style({
   margin: "0 auto 10px",
   padding: "4px 8px",
   backgroundColor: "#fff",
-});
-
-const header = style({
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "4px 8px",
-  maxWidth: "520px",
-  margin: "0 auto",
-  backgroundColor: "#fff",
-  borderBottom: "1px solid #ddd",
 });
 
 const flexRow = style({
@@ -40,5 +30,5 @@ const footer = style({
   fontSize: "14px",
 });
 
-export { main, container, header, flexRow, footer };
+export { main, container, flexRow, footer };
 

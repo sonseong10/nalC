@@ -1,44 +1,57 @@
 import { style } from "@vanilla-extract/css";
 import SVG from "../../styles/icon";
 
-export const hambugerMenu = style({
-  border: "none",
-  width: "52px",
-  height: "46px",
-  background: `url(${SVG.Map("#1d1d1d")})`,
-  backgroundSize: "20px 20px",
+const header = style({
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "4px 8px",
+  height: "60px",
+  maxWidth: "520px",
+  margin: "0 auto",
   backgroundColor: "#fff",
-  backgroundPosition: "center center",
-  backgroundRepeat: "no-repeat",
-  cursor: "pointer",
-  boxSizing: "border-box",
+  borderBottom: "1px solid #ddd",
 });
 
-export const searchBar = style({
-  position: "relative",
-});
-
-export const searchButton = style({
-  position: "absolute",
-  right: "4px",
-  border: "none",
-  width: "36px",
-  height: "36px",
-  background: `url(${SVG.Search("#323232")})`,
-  backgroundSize: "18px 18px",
-  backgroundColor: "#fff",
-  backgroundPosition: "center center",
-  backgroundRepeat: "no-repeat",
-  cursor: "pointer",
-  boxSizing: "border-box",
-});
-
-export const inputBox = style({
-  display: "block",
-  border: "1px solid #e9e9e9",
+const logo = style({
   margin: 0,
-  padding: "6px 38px 6px 8px",
-  width: "260px",
-  height: "40px",
-  borderRadius: "4px",
+  fontSize: "24px",
+  background: "url('../../../public/favicon.svg') no-repeat center center",
+  color: "transparent",
+  userSelect: "none",
 });
+
+const searchButton = style({
+  position: "relative",
+  display: "flex",
+  alignItems: "center",
+  padding: "0 10px 0 36px",
+  height: "36px",
+  backgroundColor: "#0066ff",
+  border: "none",
+  borderRadius: "8px",
+  color: "#fff",
+  cursor: "pointer",
+  boxSizing: "border-box",
+
+  selectors: {
+    "&:hover": {
+      opacity: 0.7,
+    },
+
+    "&:before": {
+      position: "absolute",
+      top: 0,
+      left: "2px",
+      display: "block",
+      width: "36px",
+      height: "36px",
+      background: `url(${SVG.Map("#fff")}) no-repeat center center`,
+      backgroundSize: "18px 18px",
+      content: "",
+    },
+  },
+});
+
+export { header, logo, searchButton };
+
