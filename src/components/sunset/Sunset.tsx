@@ -1,3 +1,4 @@
+import Title from "../layout/Title";
 import {
   box,
   sunInfo,
@@ -42,7 +43,7 @@ function SunsetInfo() {
 export default function Sunset() {
   return (
     <>
-      <h2>일출일몰</h2>
+      <Title text="일출일몰" />
 
       <SunsetInfo />
 

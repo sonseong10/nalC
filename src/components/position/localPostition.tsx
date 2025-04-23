@@ -10,10 +10,10 @@ import {
 } from "./region.css";
 
 interface RegionProps {
-  status?: {
+  status: {
     latitude: number;
     longitude: number;
-  };
+  } | null;
 }
 
 const regionSearch = async (status?: {

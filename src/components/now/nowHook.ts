@@ -79,10 +79,12 @@ const nowWeatherAPI = async (status?: {
   return data;
 };
 
-export const useNowWeatherInfo = (status?: {
-  latitude: number;
-  longitude: number;
-}) => {
+export const useNowWeatherInfo = (
+  status: {
+    latitude: number;
+    longitude: number;
+  } | null
+) => {
   const [toDayInfo, setToDayInfo] = useState<
     Array<{
       category: string;

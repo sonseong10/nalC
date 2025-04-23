@@ -10,12 +10,13 @@ import {
 } from "./now.css";
 import { flexRow } from "../../styles/app.css";
 import logoImg from "../../assets/koreaMeteorological.png";
+import LocalPostion from "../position/localPostition";
 
 interface NowWeatherProps {
-  status?: {
+  status: {
     latitude: number;
     longitude: number;
-  };
+  } | null;
 }
 
 function PositionWeather({ status }: NowWeatherProps) {
@@ -74,6 +75,7 @@ function PositionWeather({ status }: NowWeatherProps) {
 function NowWeather({ status }: NowWeatherProps) {
   return (
     <div>
+      <LocalPostion status={status} />
       {status ? (
         <PositionWeather status={status} />
       ) : (

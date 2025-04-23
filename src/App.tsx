@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { container, flexRow, footer, main } from "./styles/app.css.ts";
 import NowWeather from "./components/now/now.tsx";
 import Header from "./components/layout/header.tsx";
-import LocalPostion from "./components/position/localPostition.tsx";
-import Hourly from "./components/hourly/hourly.tsx";
+import HourlySection from "./components/hourly/Hourly.tsx";
 import Sunset from "./components/sunset/Sunset.tsx";
 
 const useInitLocation = () => {
@@ -61,23 +60,23 @@ const useInitLocation = () => {
 function App() {
   const { status } = useInitLocation();
 
+  const layout = [
+    <NowWeather status={status} />,
+    <HourlySection status={status} />,
+    <Sunset />,
+  ];
+
   return (
     <main className={main}>
       <Header />
 
-      <div className={container}>
-        <LocalPostion status={status ? status : undefined} />
-
-        <NowWeather status={status ? status : undefined} />
-      </div>
-
-      <div className={container}>
-        <Hourly status={status ? status : undefined} />
-      </div>
-
-      <div className={container}>
-        <Sunset />
-      </div>
+      {layout.map((component, index) => {
+        return (
+          <div className={container} key={index}>
+            {component}
+          </div>
+        );
+      })}
 
       <footer className={footer}>
         <dl className={flexRow}>

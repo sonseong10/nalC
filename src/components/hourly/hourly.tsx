@@ -15,6 +15,8 @@ import {
   tomorrow,
   afterTomorrow,
 } from "./hourly.css";
+import Title from "../layout/Title";
+import getKmaBaseDateTime from "../../utils/kmaTimetable";
 
 interface ForecastItem {
   baseDate: string;
@@ -32,44 +34,12 @@ interface ForecastGroup extends ForecastItem {
   timeLabel: string;
 }
 
-interface NowWeatherProps {
-  status?: {
+interface IHourlyWeatherProps {
+  status: {
     latitude: number;
     longitude: number;
-  };
+  } | null;
 }
-
-const getKmaBaseDateTime = (): { baseDate: string; baseTime: string } => {
-  const now = moment();
-  const baseTimes = [
-    "2300",
-    "2000",
-    "1700",
-    "1400",
-    "1100",
-    "0800",
-    "0500",
-    "0200",
-  ];
-
-  for (const time of baseTimes) {
-    const hour = parseInt(time.slice(0, 2), 10);
-    const minute = 10;
-    const baseMoment = moment().set({ hour, minute, second: 0 });
-
-    if (now.isSameOrAfter(baseMoment)) {
-      return {
-        baseDate: now.format("YYYYMMDD"),
-        baseTime: time,
-      };
-    }
-  }
-
-  return {
-    baseDate: moment().subtract(1, "day").format("YYYYMMDD"),
-    baseTime: "2300",
-  };
-};
 
 const fetchWeatherData = async (status: {
   latitude: number;
@@ -139,7 +109,9 @@ const fetchWeatherData = async (status: {
   }
 };
 
-const useWeatherData = (status?: { latitude: number; longitude: number }) => {
+const useWeatherData = (
+  status: { latitude: number; longitude: number } | null
+) => {
   const [weatherData, setWeatherData] = useState<ForecastGroup[][]>([]);
 
   useEffect(() => {
@@ -151,14 +123,11 @@ const useWeatherData = (status?: { latitude: number; longitude: number }) => {
   return { weatherData };
 };
 
-function Hourly({ status }: NowWeatherProps) {
+function Hourly({ status }: IHourlyWeatherProps) {
   const { weatherData } = useWeatherData(status);
-  const { baseDate, baseTime } = getKmaBaseDateTime();
 
   return (
     <>
-      <h2>시간별 날씨</h2>
-
       {weatherData.length === 0 ? (
         <>로딩중입니다.</>
       ) : (
@@ -259,7 +228,18 @@ function Hourly({ status }: NowWeatherProps) {
           </div>
         </div>
       )}
+    </>
+  );
+}
 
+function HourlySection({ status }: IHourlyWeatherProps) {
+  const { baseDate, baseTime } = getKmaBaseDateTime();
+
+  return (
+    <>
+      <Title text="시간별 날씨" />
+
+      <Hourly status={status} />
       <p className="offer_area">
         <a
           href="https://www.weather.go.kr/w/index.do"
@@ -275,4 +255,4 @@ function Hourly({ status }: NowWeatherProps) {
   );
 }
 
-export default Hourly;
+export default HourlySection;
