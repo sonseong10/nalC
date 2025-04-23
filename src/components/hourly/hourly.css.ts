@@ -10,7 +10,7 @@ const hourlyKeyGroup = style({
   flexDirection: "column",
   justifyContent: "space-between",
   alignItems: "center",
-  paddingBottom: "20px",
+  padding: "8px 0 16px",
   borderRight: "1px solid #ddd",
   flex: "0 0 80px",
 });
@@ -43,7 +43,7 @@ const card = style({
   alignItems: "center",
   justifyContent: "flex-start",
   flex: "0 0 100px",
-  height: "218px",
+  padding: "8px 0",
 
   selectors: {
     "&:not(:last-child)": {

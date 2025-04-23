@@ -64,10 +64,10 @@ const fetchWeatherData = async (status: {
       { params }
     );
 
-    const rawItems = res.data.response.body?.items?.item as ForecastItem[];
+    const rawItems = res.data.response?.body?.items?.item as ForecastItem[];
 
     const now = moment();
-    const filtered = rawItems
+    const filtered = (rawItems ? rawItems : [])
       .filter((i) => !["TMX", "TMN"].includes(i.category))
       .filter((i) => {
         return (
