@@ -1,4 +1,8 @@
-import { globalStyle } from "@vanilla-extract/css";
+import { fontFace, globalStyle } from "@vanilla-extract/css";
+
+const comicSans = fontFace({
+  src: 'local("Nanum Gothic, serif")',
+});
 
 globalStyle("body", {
   margin: 0,
@@ -7,7 +11,7 @@ globalStyle("body", {
 
 globalStyle("*", {
   boxSizing: "border-box",
-  fontFamily: "Nanum Gothic, serif",
+  fontFamily: comicSans,
   fontWeight: 400,
   fontStyle: "normal",
 });
