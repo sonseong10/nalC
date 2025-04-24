@@ -63,7 +63,7 @@ function App() {
   const layout = [
     <NowWeather status={status} />,
     <HourlySection status={status} />,
-    <Sunset />,
+    <Sunset status={status} />,
   ];
 
   return (

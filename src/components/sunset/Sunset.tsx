@@ -10,8 +10,45 @@ import {
   currentBar,
   bar,
 } from "./sunset.css";
+import moment from "moment";
+import { useEffect } from "react";
+import { WeatherApi } from "../../utils/HTTP";
 
-function SunsetInfo() {
+interface ISunsetInfoProps {
+  status: {
+    latitude: number;
+    longitude: number;
+  } | null;
+}
+
+function SunsetInfo({ status }: ISunsetInfoProps) {
+  useEffect(() => {
+    if (!status) {
+      //
+    } else {
+      const api = async () => {
+        const params = {
+          serviceKey: process.env.VITE_APP_WEATHER_KEY,
+          locdate: moment().format("YYYYMMDD"),
+          longitude: status.longitude,
+          latitude: status.latitude,
+          dnYn: "Y",
+        };
+        await WeatherApi.get(
+          "/B090041/openapi/service/RiseSetInfoService/getLCRiseSetInfo",
+          { params }
+        )
+          .then((res) => {
+            if (res) {
+              console.log(res.data?.response?.body?.items?.item);
+            }
+          })
+          .catch((error) => console.error(error));
+      };
+      api();
+    }
+  }, [status]);
+
   return (
     <div className={box}>
       <div className={sunChart}>
@@ -40,12 +77,12 @@ function SunsetInfo() {
   );
 }
 
-export default function Sunset() {
+function Sunset(props: ISunsetInfoProps) {
   return (
     <>
       <Title text="일출일몰" />
 
-      <SunsetInfo />
+      <SunsetInfo status={props.status} />
 
       <p className="offer_area">
         <a href="https://www.kasi.re.kr/" target="_blank">
@@ -56,3 +93,4 @@ export default function Sunset() {
     </>
   );
 }
+export default Sunset;
