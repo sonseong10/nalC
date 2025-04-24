@@ -59,7 +59,7 @@ const nowWeatherAPI = async (status?: {
         fcstValue: string | number;
         baseDate: string;
         baseTime: string;
-      }> = res.data.response.body?.items?.item
+      }> = res.data.response?.body?.items?.item
         .map((data: { [type: string]: string | number }) => {
           if (data.fcstTime === `${moment().hour() + 1}00`) {
             return {
