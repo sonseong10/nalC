@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { container, flexRow, footer, main } from "./styles/app.css.ts";
 import NowWeather from "./components/now/now.tsx";
 import Header from "./components/layout/header.tsx";
-import HourlySection from "./components/hourly/Hourly.tsx";
+import HourlySection from "./components/hourly/WeatherHourly.tsx";
 import Sunset from "./components/sunset/Sunset.tsx";
 
 const useInitLocation = () => {
