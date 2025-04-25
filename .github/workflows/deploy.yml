@@ -34,13 +34,20 @@ jobs:
       - name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      - name: Set environment variables
+        env: 
+          VITE_APP_NAVER_CLIENT_ID: ${{ secrets.VITE_APP_NAVER_CLIENT_ID }}
+          VITE_APP_NAVER_CLIENT_SECRET: ${{ secrets.VITE_APP_NAVER_CLIENT_SECRET }}
+          VITE_APP_WEATHER_KEY: ${{ secrets.VITE_APP_WEATHER_KEY }}
+          VITE_APP_NODE_ENV: ${{ secrets.VITE_APP_NODE_ENV }}
+        run: |
+          echo "VITE_APP_NAVER_CLIENT_ID=${VITE_APP_NAVER_CLIENT_ID}" >> .env
+          echo "VITE_APP_NAVER_CLIENT_SECRET=${VITE_APP_NAVER_CLIENT_SECRET}" >> .env
+          echo "VITE_APP_WEATHER_KEY=${VITE_APP_WEATHER_KEY}" >> .env
+          echo "VITE_APP_NODE_ENV=${VITE_APP_NODE_ENV}" >> .env
+
       - name: Build
         run: yarn build
-
-      - name: Set up environment variables
-        run: |
-          echo "VITE_APP_WEATHER_KEY=${{ secrets.VITE_APP_WEATHER_KEY }}" >> $GITHUB_ENV
-          echo "VITE_APP_NODE_ENV=production" >> $GITHUB_ENV
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
