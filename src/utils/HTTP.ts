@@ -10,7 +10,7 @@ const NaverApi = axios.create({
 });
 
 const WeatherApi = axios.create({
-  baseURL: "http://apis.data.go.kr",
+  baseURL: "https://apis.data.go.kr",
   params: {
     serviceKey: import.meta.env.VITE_APP_WEATHER_KEY || "",
   },
