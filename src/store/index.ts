@@ -5,7 +5,7 @@ import { createSunsetSlice, SunsetSlice } from "./sunsetStore";
 type RootState = SunsetSlice;
 
 const useWeatherStore = create<RootState>()(
-  process.env.NODE_ENV === "production"
+  import.meta.env.VITE_APP_NODE_ENV === "production"
     ? (...arg) => ({
         ...createSunsetSlice(...arg),
       })
