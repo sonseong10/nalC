@@ -5,9 +5,6 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd());
 
-  console.log("VITE_APP_WEATHER_KEY:", env.VITE_APP_WEATHER_KEY);
-  console.log("VITE_APP_NODE_ENV:", env.VITE_APP_NODE_ENV);
-
   return {
     base: "/nalC/",
     plugins: [vanillaExtractPlugin(), react()],
