@@ -1,0 +1,63 @@
+name: Deploy nalC Pages
+
+on:
+  push:
+    tags:
+      - 'v*'  # v로 시작하는 태그에만 반응 (예: v1.0.0)
+  workflow_dispatch: # 수동 실행도 가능하게
+
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build
+        run: yarn build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+      - name: Clear build artifacts and cache
+        run: |
+          rm -rf dist
+          npm cache clean --force
+          yarn cache clean
+          rm -rf ~/.npm
+          rm -rf ~/.yarn
+
+      - name: Deployment Logs
+        run: echo "Deployment to GitHub Pages is complete."
