@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd());
+  const env = loadEnv(mode, process.cwd(), "");
 
   const defineEnv = Object.keys(env).reduce(
     (acc: { [key: string]: string }, key) => {
@@ -14,6 +14,8 @@ export default defineConfig(({ mode }) => {
     },
     {}
   );
+
+  console.log(env, mode, defineEnv);
 
   return {
     base: "/nalC/",
