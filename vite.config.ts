@@ -5,6 +5,9 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 
 export default defineConfig({
   plugins: [vanillaExtractPlugin(), react()],
+  define: {
+    "process.env.NODE_ENV": process.env.NODE_ENV,
+  },
   server: {
     proxy: {
       "/api/map-reversegeocode": {
