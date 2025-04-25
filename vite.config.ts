@@ -14,12 +14,6 @@ export default defineConfig(({ mode }) => {
     define: {
       __APP_ENV__: JSON.stringify(env.VITE_ENV),
       "process.env.NODE_ENV": JSON.stringify(mode),
-      "import.meta.env.VITE_APP_WEATHER_KEY": JSON.stringify(
-        env.VITE_APP_WEATHER_KEY
-      ),
-      "import.meta.env.VITE_APP_NODE_ENV": JSON.stringify(
-        env.VITE_APP_NODE_ENV
-      ),
     },
     server: {
       proxy: {

@@ -37,6 +37,11 @@ jobs:
       - name: Build
         run: yarn build
 
+      - name: Set up environment variables
+        run: |
+          echo "VITE_APP_WEATHER_KEY=${{ secrets.VITE_APP_WEATHER_KEY }}" >> $GITHUB_ENV
+          echo "VITE_APP_NODE_ENV=production" >> $GITHUB_ENV
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
