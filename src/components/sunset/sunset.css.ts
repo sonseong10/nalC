@@ -2,7 +2,7 @@ import { style } from "@vanilla-extract/css";
 
 const box = style({
   position: "relative",
-  padding: "24px",
+  padding: "38px",
   borderColor: "#f7b000",
   backgroundColor: "#ffb900",
   borderRadius: "10px",
@@ -11,7 +11,7 @@ const box = style({
 
 const sunInfo = style({
   position: "absolute",
-  bottom: "6px",
+  bottom: "16px",
   left: "50%",
   display: "flex",
   alignItems: "center",
@@ -27,26 +27,34 @@ const iconArea = style({
   width: "70px",
   height: "51px",
   overflow: "hidden",
-  background:
-    "url('https://ssl.pstatic.net/static/weather/image/animation/sun_up.svg') no-repeat",
 
-  "::after": {
-    position: "absolute",
-    bottom: "-1px",
-    left: "50%",
-    backgroundPosition: "-590px -358px",
-    backgroundRepeat: "no-repeat",
-    width: "73px",
-    height: "3px",
-    backgroundColor: "#ffe361",
-    transform: "translateX(-50%)",
-    content: "",
+  selectors: {
+    "&.sunRise": {
+      background:
+        "url('https://ssl.pstatic.net/static/weather/image/animation/sun_up.svg') no-repeat",
+    },
+    "&.sunSet": {
+      background:
+        "url('https://ssl.pstatic.net/static/weather/image/animation/sun_down.svg') no-repeat",
+    },
+    "&:after": {
+      position: "absolute",
+      bottom: "-1px",
+      left: "50%",
+      backgroundPosition: "-590px -358px",
+      backgroundRepeat: "no-repeat",
+      width: "73px",
+      height: "3px",
+      backgroundColor: "#ffe361",
+      transform: "translateX(-50%)",
+      content: "",
+    },
   },
 });
 
 const timeTable = style({
   display: "flex",
-  fontSize: "16px",
+  fontSize: "18px",
 });
 
 const timeValue = style({
@@ -80,7 +88,7 @@ const progressBar = style({
     width: "7px",
     height: "7px",
     borderRadius: "50%",
-    backgroundColor: "#ea9000",
+    backgroundColor: "#fefbbd",
     content: "",
   },
 
@@ -99,9 +107,9 @@ const progressBar = style({
 
 const currentBar = style({
   position: "absolute",
-  overflow: "hidden",
   width: "264px",
   height: "132px",
+  overflow: "hidden",
 });
 
 const bar = style({
@@ -110,10 +118,33 @@ const bar = style({
   borderRadius: "50%",
   boxSizing: "border-box",
   border: "7px solid #ea9000",
-  borderBottomColor: "#ea9000",
-  borderRightColor: "#ea9000",
-  /* -webkit-transform: rotate(45deg); */
-  /* transform: rotate(45deg); */
+  borderBottomColor: "#fefbbd",
+  borderRightColor: "#fefbbd",
+});
+
+const dot = style({
+  position: "absolute",
+  height: "264px",
+  width: "264px",
+  transform: "rotate(0)",
+  zIndex: 100,
+
+  selectors: {
+    "&:after": {
+      position: "absolute",
+      top: "50%",
+      left: "-17px",
+      width: "42px",
+      height: "42px",
+      display: "block",
+      backgroundColor: "#fffca5",
+      borderRadius: "21px",
+      border: "5px solid #feda39",
+      boxSizing: "border-box",
+      transform: "translateY(-50%)",
+      content: "",
+    },
+  },
 });
 
 export {
@@ -126,4 +157,5 @@ export {
   progressBar,
   currentBar,
   bar,
+  dot,
 };

@@ -9,10 +9,13 @@ import {
   progressBar,
   currentBar,
   bar,
+  dot,
 } from "./sunset.css";
 import moment from "moment";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { WeatherApi } from "../../utils/HTTP";
+import useWeatherStore from "../../store/index";
+import { useShallow } from "zustand/shallow";
 
 interface ISunsetInfoProps {
   status: {
@@ -22,57 +25,95 @@ interface ISunsetInfoProps {
 }
 
 function SunsetInfo({ status }: ISunsetInfoProps) {
+  const { info, setSunInfo } = useWeatherStore(
+    useShallow((state) => ({
+      info: state.info,
+      setSunInfo: state.setSunInfo,
+    }))
+  );
+
   useEffect(() => {
-    if (!status) {
-      //
-    } else {
+    if (status) {
+      const loaction =
+        "/B090041/openapi/service/RiseSetInfoService/getLCRiseSetInfo";
+
       const api = async () => {
         const params = {
-          serviceKey: process.env.VITE_APP_WEATHER_KEY,
           locdate: moment().format("YYYYMMDD"),
           longitude: status.longitude,
           latitude: status.latitude,
           dnYn: "Y",
         };
-        await WeatherApi.get(
-          "/B090041/openapi/service/RiseSetInfoService/getLCRiseSetInfo",
-          { params }
-        )
+        await WeatherApi.get(loaction, { params })
           .then((res) => {
-            if (res) {
-              console.log(res.data?.response?.body?.items?.item);
-            }
+            const item = res.data?.response?.body?.items?.item;
+            setSunInfo({
+              inc: moment(item?.sunrise.trim(), "HHmm").format("HH:mm"),
+              set: moment(item?.sunset.trim(), "HHmm").format("HH:mm"),
+            });
           })
           .catch((error) => console.error(error));
       };
       api();
     }
-  }, [status]);
+  }, [setSunInfo, status]);
+
+  const rotateDeg = useMemo(() => {
+    if (!info.inc || !info.set) return 0;
+
+    const now = moment();
+    const sunrise = moment(info.inc, "HH:mm");
+    const sunset = moment(info.set, "HH:mm");
+
+    const totalMinutes = sunset.diff(sunrise, "minutes");
+    const passedMinutes = now.diff(sunrise, "minutes");
+    const progress = passedMinutes / totalMinutes;
+
+    return progress;
+  }, [info]);
 
   return (
     <div className={box}>
-      <div className={sunChart}>
-        <div className={progressBar}>
-          <div className={currentBar}>
-            <div className={bar}></div>
+      {!info ? (
+        <></>
+      ) : (
+        <>
+          <div className={sunChart}>
+            <div className={progressBar}>
+              <div
+                className={dot}
+                style={{ transform: `rotate(${rotateDeg * 180}deg)` }}
+              ></div>
+              <div className={currentBar}>
+                <div
+                  className={bar}
+                  style={{ transform: `rotate(${rotateDeg * 240}deg)` }}
+                ></div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
 
-      <div className={sunInfo}>
-        <div className={iconArea}></div>
-
-        <dl className={timeTable}>
-          <dt>일출</dt>
-          <dd className={timeValue}>
-            <time dateTime="HH:mm">05:50</time>
-          </dd>
-          <dt>일몰</dt>
-          <dd className={timeValue}>
-            <time dateTime="HH:mm">19:20</time>
-          </dd>
-        </dl>
-      </div>
+          <div className={sunInfo}>
+            <div
+              className={`${iconArea} ${
+                moment().isBefore(moment("12:00", "HH:mm"))
+                  ? "sunRise"
+                  : "sunSet"
+              }`}
+            ></div>
+            <dl className={timeTable}>
+              <dt>일출</dt>
+              <dd className={timeValue}>
+                <time dateTime="HH:mm">{info.inc}</time>
+              </dd>
+              <dt>일몰</dt>
+              <dd className={timeValue}>
+                <time dateTime="HH:mm">{info.set}</time>
+              </dd>
+            </dl>
+          </div>
+        </>
+      )}
     </div>
   );
 }
@@ -81,16 +122,15 @@ function Sunset(props: ISunsetInfoProps) {
   return (
     <>
       <Title text="일출일몰" />
-
       <SunsetInfo status={props.status} />
-
       <p className="offer_area">
-        <a href="https://www.kasi.re.kr/" target="_blank">
+        <a href="https://www.kasi.re.kr/" target="_blank" rel="noreferrer">
           한국천문연구원
-        </a>
+        </a>{" "}
         발표
       </p>
     </>
   );
 }
+
 export default Sunset;
