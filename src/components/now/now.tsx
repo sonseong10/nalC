@@ -11,6 +11,8 @@ import {
 import { flexRow } from "../../styles/app.css";
 import logoImg from "../../assets/koreaMeteorological.png";
 import LocalPostion from "../position/localPostition";
+import useWeatherStore from "../../store";
+import { useShallow } from "zustand/shallow";
 
 interface NowWeatherProps {
   status: {
@@ -21,6 +23,9 @@ interface NowWeatherProps {
 
 function PositionWeather({ status }: NowWeatherProps) {
   const { toDayInfo } = useNowWeatherInfo(status);
+  const { info } = useWeatherStore(
+    useShallow((state) => ({ info: state.info }))
+  );
 
   return (
     <>
@@ -32,7 +37,9 @@ function PositionWeather({ status }: NowWeatherProps) {
             <div className={weatherGroup}>
               <img
                 className={weatherImage}
-                src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
+                src={`https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt${
+                  moment().isAfter(moment(info.set, "HH:mm")) ? "2" : "1"
+                }.svg`}
                 alt="맑음"
               />
             </div>

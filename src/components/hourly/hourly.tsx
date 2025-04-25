@@ -17,6 +17,8 @@ import {
 } from "./hourly.css";
 import Title from "../layout/Title";
 import getKmaBaseDateTime from "../../utils/kmaTimetable";
+import useWeatherStore from "../../store";
+import { useShallow } from "zustand/shallow";
 
 interface ForecastItem {
   baseDate: string;
@@ -30,6 +32,7 @@ interface ForecastItem {
 }
 
 interface ForecastGroup extends ForecastItem {
+  isNight?: boolean;
   dayLabel: "오늘" | "내일" | "모레";
   timeLabel: string;
 }
@@ -114,11 +117,31 @@ const useWeatherData = (
 ) => {
   const [weatherData, setWeatherData] = useState<ForecastGroup[][]>([]);
 
+  const { info } = useWeatherStore(
+    useShallow((state) => ({ info: state.info }))
+  );
+
   useEffect(() => {
-    if (status) {
-      fetchWeatherData(status).then((data) => data && setWeatherData(data));
+    if (status && info) {
+      fetchWeatherData(status).then((data) => {
+        if (data) {
+          const updatedData = data.map((group) =>
+            group.map((item) => ({
+              ...item,
+              isNight:
+                moment(item.fcstTime, "HHmm").isAfter(
+                  moment(info.set, "HH:mm")
+                ) ||
+                moment(item.fcstTime, "HHmm").isBefore(
+                  moment(info.inc, "HH:mm")
+                ),
+            }))
+          );
+          setWeatherData(updatedData);
+        }
+      });
     }
-  }, [status]);
+  }, [status, info]);
 
   return { weatherData };
 };
@@ -165,7 +188,9 @@ function Hourly({ status }: IHourlyWeatherProps) {
                   {categoryMap.has("SKY") && (
                     <img
                       className={weatherImg}
-                      src="https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt1.svg"
+                      src={`https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt${
+                        categoryMap.get("SKY")!.isNight ? 2 : 1
+                      }.svg`}
                       alt="날씨"
                     />
                   )}
