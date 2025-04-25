@@ -3,19 +3,10 @@ import react from "@vitejs/plugin-react";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), "");
+  const env = loadEnv(mode, process.cwd());
 
-  const defineEnv = Object.keys(env).reduce(
-    (acc: { [key: string]: string }, key) => {
-      if (key.startsWith("VITE_")) {
-        acc[`import.meta.env.${key}`] = JSON.stringify(env[key]);
-      }
-      return acc;
-    },
-    {}
-  );
-
-  console.log(env, mode, defineEnv);
+  console.log("VITE_APP_WEATHER_KEY:", env.VITE_APP_WEATHER_KEY);
+  console.log("VITE_APP_NODE_ENV:", env.VITE_APP_NODE_ENV);
 
   return {
     base: "/nalC/",
@@ -23,7 +14,12 @@ export default defineConfig(({ mode }) => {
     define: {
       __APP_ENV__: JSON.stringify(env.VITE_ENV),
       "process.env.NODE_ENV": JSON.stringify(mode),
-      ...defineEnv,
+      "import.meta.env.VITE_APP_WEATHER_KEY": JSON.stringify(
+        env.VITE_APP_WEATHER_KEY
+      ),
+      "import.meta.env.VITE_APP_NODE_ENV": JSON.stringify(
+        env.VITE_APP_NODE_ENV
+      ),
     },
     server: {
       proxy: {
