@@ -1,5 +1,5 @@
 import moment from "moment";
-import { NaverApi } from "../../utils/HTTP";
+import { KakaoApi } from "../../utils/HTTP";
 import { useEffect, useState } from "react";
 import { flexRow } from "../../styles/app.css";
 import {
@@ -16,6 +16,20 @@ interface RegionProps {
   } | null;
 }
 
+interface IResKakaoGeoMap {
+  documents: {
+    region_type: "B" | "H";
+    address_name: string;
+    region_1depth_name: string;
+    region_2depth_name: string;
+    region_3depth_name: string;
+    region_4depth_name: string;
+    code: string;
+    x: number;
+    y: number;
+  }[];
+}
+
 const regionSearch = async (status?: {
   latitude: number;
   longitude: number;
@@ -24,14 +38,23 @@ const regionSearch = async (status?: {
     return;
   }
 
-  const res = await NaverApi.get(`/map-reversegeocode`, {
-    params: {
-      coords: `${status?.longitude},${status?.latitude}`,
-      orders: "admcode",
-      output: "json",
-    },
-  })
-    .then((json) => json.data.results[0].region)
+  const res = await KakaoApi.get<IResKakaoGeoMap>(
+    `/v2/local/geo/coord2regioncode.json`,
+    {
+      params: {
+        x: status?.longitude,
+        y: status?.latitude,
+      },
+    }
+  )
+    .then((res) => {
+      const index = res?.data?.documents.findIndex(
+        (adress) => adress.region_type === "H"
+      );
+      if (index > -1) {
+        return res?.data?.documents[index];
+      }
+    })
     .catch((error) => {
       console.log(error);
       return {};
@@ -41,13 +64,19 @@ const regionSearch = async (status?: {
 };
 
 function LocalPostion({ status }: RegionProps) {
-  const [region, setRegion] = useState<object>({});
+  const [region, setRegion] = useState<{ [key: string]: string }>({});
 
-  function createSentence(): string {
-    const areaNames = Object.values(region)
-      .filter((area) => area.name.trim() !== "" && area.name !== "kr")
-      .map((area) => area.name);
-    return `${areaNames.join(" ")}`;
+  function createAddress() {
+    const addressParts = [];
+
+    for (let i = 1; i <= 4; i++) {
+      const regionKey = `region_${i}depth_name`;
+      if (region[regionKey]) {
+        addressParts.push(region[regionKey]);
+      }
+    }
+
+    return addressParts.join(" ");
   }
 
   useEffect(() => {
@@ -67,7 +96,7 @@ function LocalPostion({ status }: RegionProps) {
       <strong className={todayInfo}>{moment().format("YYYY.MM.DD")}</strong>
 
       <div className={`${flexRow} ${regionTextGroup}`}>
-        <h2>{createSentence()}</h2>
+        <h2>{createAddress()}</h2>
 
         <div>
           <button className={bookmarkButton} aria-label="미구독"></button>

@@ -12,20 +12,5 @@ export default defineConfig(({ mode }) => {
       __APP_ENV__: JSON.stringify(env.VITE_ENV),
       "process.env.NODE_ENV": JSON.stringify(mode),
     },
-    server: {
-      proxy: {
-        "/api/map-reversegeocode": {
-          target: "https://naveropenapi.apigw.ntruss.com",
-          changeOrigin: true,
-          rewrite: (path) =>
-            path.replace(
-              /^\/api\/map-reversegeocode/,
-              "/map-reversegeocode/v2/gc"
-            ),
-          secure: false,
-          ws: true,
-        },
-      },
-    },
   };
 });

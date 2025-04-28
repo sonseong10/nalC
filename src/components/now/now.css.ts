@@ -18,7 +18,7 @@ const tmp = style({
   textAlign: "center",
   fontSize: "64px",
   fontWeight: "700",
-  letterSpacing: "-8px",
+  letterSpacing: "-3px",
 });
 
 const infoGroup = style({

@@ -1,14 +1,11 @@
 import axios from "axios";
 
-const NaverApi = axios.create({
-  baseURL:
-    import.meta.env.VITE_APP_NODE_ENV === "production"
-      ? "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc"
-      : "/api",
+const KakaoApi = axios.create({
+  baseURL: "https://dapi.kakao.com",
   headers: {
-    "Content-Type": "application/json",
-    "x-ncp-apigw-api-key-id": import.meta.env.VITE_APP_NAVER_CLIENT_ID || "",
-    "x-ncp-apigw-api-key": import.meta.env.VITE_APP_NAVER_CLIENT_SECRET || "",
+    Authorization: `KakaoAK ${
+      import.meta.env.VITE_APP_NAVER_CLIENT_SECRET || ""
+    }`,
   },
 });
 
@@ -19,4 +16,4 @@ const WeatherApi = axios.create({
   },
 });
 
-export { NaverApi, WeatherApi };
+export { KakaoApi, WeatherApi };
