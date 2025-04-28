@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export const useBlindAction = () => {
-  const [isShow, setIsShow] = useState<boolean>(true);
+  const [isShow, setIsShow] = useState<boolean>(false);
 
   const change = (state?: boolean) =>
     setIsShow(state !== undefined ? state : !isShow);
