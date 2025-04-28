@@ -75,10 +75,9 @@ const sunChart = style({
 
 const progressBar = style({
   position: "relative",
-  textAlign: "center",
   width: "264px",
   height: "136px",
-  transform: "scale(1)",
+  textAlign: "center",
 
   ":before": {
     position: "absolute",
@@ -106,7 +105,7 @@ const progressBar = style({
 });
 
 const currentBar = style({
-  position: "absolute",
+  position: "relative",
   width: "264px",
   height: "132px",
   overflow: "hidden",
@@ -116,7 +115,6 @@ const bar = style({
   width: "264px",
   height: "264px",
   borderRadius: "50%",
-  boxSizing: "border-box",
   border: "7px solid #ea9000",
   borderBottomColor: "#fefbbd",
   borderRightColor: "#fefbbd",
@@ -126,7 +124,6 @@ const dot = style({
   position: "absolute",
   height: "264px",
   width: "264px",
-  transform: "rotate(0)",
   zIndex: 100,
 
   selectors: {
@@ -141,7 +138,7 @@ const dot = style({
       borderRadius: "21px",
       border: "5px solid #feda39",
       boxSizing: "border-box",
-      transform: "translateY(-50%)",
+      // transform: "translateY(-50%)",
       content: "",
     },
   },

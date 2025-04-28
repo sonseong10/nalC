@@ -59,18 +59,20 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
   }, [setSunInfo, status]);
 
   const rotateDeg = useMemo(() => {
-    if (!info.inc || !info.set) return 0;
-
     const now = moment();
-    const sunrise = moment(info.inc, "HH:mm");
-    const sunset = moment(info.set, "HH:mm");
+    const startOfDay = moment().startOf("day");
+    const endOfDay = moment().endOf("day");
 
-    const totalMinutes = sunset.diff(sunrise, "minutes");
-    const passedMinutes = now.diff(sunrise, "minutes");
-    const progress = passedMinutes / totalMinutes;
+    const totalMinutes = endOfDay.diff(startOfDay, "minutes");
+    const passedMinutes = now.diff(startOfDay, "minutes");
 
-    return progress;
-  }, [info]);
+    const progress = Math.min(Math.max(passedMinutes / totalMinutes, 0), 1);
+
+    return {
+      dot: progress * 140,
+      bar: progress * 230,
+    };
+  }, []);
 
   return (
     <div className={box}>
@@ -79,16 +81,16 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
       ) : (
         <>
           <div className={sunChart}>
+            <div
+              className={dot}
+              style={{ transform: `rotate(${rotateDeg.dot}deg)` }}
+            />
             <div className={progressBar}>
-              <div
-                className={dot}
-                style={{ transform: `rotate(${rotateDeg * 180}deg)` }}
-              ></div>
               <div className={currentBar}>
                 <div
                   className={bar}
-                  style={{ transform: `rotate(${rotateDeg * 240}deg)` }}
-                ></div>
+                  style={{ transform: `rotate(${rotateDeg.bar}deg)` }}
+                />
               </div>
             </div>
           </div>
