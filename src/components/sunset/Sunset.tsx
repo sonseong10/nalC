@@ -58,21 +58,31 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
     }
   }, [setSunInfo, status]);
 
-  const rotateDeg = useMemo(() => {
-    const now = moment();
-    const startOfDay = moment().startOf("day");
-    const endOfDay = moment().endOf("day");
+    const rotateDeg = useMemo(() => {
+      const now = moment();
+      const sunrise = moment(info?.inc, "HH:mm");
+      const sunset = moment(info?.set, "HH:mm");
 
-    const totalMinutes = endOfDay.diff(startOfDay, "minutes");
-    const passedMinutes = now.diff(startOfDay, "minutes");
+      if (now.isBefore(sunrise)) {
+        return { dot: 0, bar: 42 };
+      }
+      if (now.isAfter(sunset)) {
+        return { dot: 180, bar: 224 };
+      }
 
-    const progress = Math.min(Math.max(passedMinutes / totalMinutes, 0), 1);
+      const totalMinutes = sunset.diff(sunrise, "minutes");
+      const passedMinutes = now.diff(sunrise, "minutes");
+      const progress = Math.min(Math.max(passedMinutes / totalMinutes, 0), 1);
 
-    return {
-      dot: progress * 140,
-      bar: progress * 230,
-    };
-  }, []);
+      return {
+        dot: progress * 180,
+        bar: progress * 224,
+      };
+    }, [info]);
+
+
+    
+
 
   return (
     <div className={box}>

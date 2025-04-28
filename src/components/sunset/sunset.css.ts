@@ -71,6 +71,7 @@ const sunChart = style({
   width: "264px",
   height: "136px",
   margin: "0 auto",
+  transformOrigin: "50% 100%",
 });
 
 const progressBar = style({
@@ -105,7 +106,7 @@ const progressBar = style({
 });
 
 const currentBar = style({
-  position: "relative",
+  position: "absolute",
   width: "264px",
   height: "132px",
   overflow: "hidden",
@@ -138,7 +139,7 @@ const dot = style({
       borderRadius: "21px",
       border: "5px solid #feda39",
       boxSizing: "border-box",
-      // transform: "translateY(-50%)",
+      transform: "translateY(-50%)",
       content: "",
     },
   },
