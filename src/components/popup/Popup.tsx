@@ -69,13 +69,15 @@ function Popup({ isShow, change }: IPopupProps) {
   };
 
   function colorText(inputText: string) {
-    const regex = new RegExp(inputRef.current!.value, "g");
-    const result = inputText.replace(
-      regex,
-      `<span style="color: #0066ff;">${inputRef.current!.value}</span>`
-    );
+    if (inputRef.current) {
+      const regex = new RegExp(inputRef.current.value, "g");
+      const result = inputText.replace(
+        regex,
+        `<span style="color: #0066ff;">${inputRef.current.value}</span>`
+      );
 
-    return { __html: result };
+      return { __html: result };
+    }
   }
 
   return (
@@ -90,6 +92,8 @@ function Popup({ isShow, change }: IPopupProps) {
             <button
               onClick={(e) => {
                 e.preventDefault();
+                setAddress(undefined);
+                setTotalCount(0);
                 change(false);
               }}
               className={closedButton}
