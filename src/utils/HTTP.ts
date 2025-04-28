@@ -4,7 +4,7 @@ const KakaoApi = axios.create({
   baseURL: "https://dapi.kakao.com",
   headers: {
     Authorization: `KakaoAK ${
-      import.meta.env.VITE_APP_NAVER_CLIENT_SECRET || ""
+      import.meta.env.VITE_APP_KAKAO_CLIENT_SECRET || ""
     }`,
   },
 });
