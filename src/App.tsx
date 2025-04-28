@@ -4,6 +4,9 @@ import NowWeather from "./components/now/now.tsx";
 import Header from "./components/layout/header.tsx";
 import HourlySection from "./components/hourly/WeatherHourly.tsx";
 import Sunset from "./components/sunset/Sunset.tsx";
+import Popup from "./components/popup/Popup.tsx";
+import Blind from "./components/layout/blind/Blind.tsx";
+import { useBlindAction } from "./components/layout/blind/blind.ts";
 
 const useInitLocation = () => {
   const [status, setLocation] = useState<null | {
@@ -57,9 +60,27 @@ const useInitLocation = () => {
   return { status };
 };
 
-function App() {
-  const { status } = useInitLocation();
+function Footer() {
+  return (
+    <footer className={footer}>
+      <dl className={flexRow}>
+        <dt>제작자</dt>
+        <dd>
+          <a href="https://github.com/sonseong10" target="_blank">
+            Son seongyeol
+          </a>
+        </dd>
+        <dt>제작기간</dt>
+        <dd>
+          <span>2025 ~</span>
+        </dd>
+      </dl>
+    </footer>
+  );
+}
 
+function Main() {
+  const { status } = useInitLocation();
   const layout = [
     <NowWeather status={status} />,
     <HourlySection status={status} />,
@@ -67,32 +88,32 @@ function App() {
   ];
 
   return (
-    <main className={main}>
-      <Header />
-
+    <main>
       {layout.map((component, index) => {
         return (
-          <div className={container} key={index}>
+          <section className={container} key={index}>
             {component}
-          </div>
+          </section>
         );
       })}
-
-      <footer className={footer}>
-        <dl className={flexRow}>
-          <dt>제작자</dt>
-          <dd>
-            <a href="https://github.com/sonseong10" target="_blank">
-              Son seongyeol
-            </a>
-          </dd>
-          <dt>제작기간</dt>
-          <dd>
-            <span>2025 ~</span>
-          </dd>
-        </dl>
-      </footer>
     </main>
+  );
+}
+
+function App() {
+  const { isShow, change } = useBlindAction();
+
+  return (
+    <div className={main}>
+      <Header blindChange={change} />
+
+      <Main />
+
+      <Footer />
+
+      <Blind isShow={isShow} change={change} />
+      <Popup isShow={isShow} change={change} />
+    </div>
   );
 }
 
