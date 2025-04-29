@@ -3,10 +3,19 @@ import { style } from "@vanilla-extract/css";
 const box = style({
   position: "relative",
   padding: "38px",
-  borderColor: "#f7b000",
+  minBlockSize: "210px",
   backgroundColor: "#ffb900",
   borderRadius: "10px",
   color: "#fff",
+
+  selectors: {
+    "&.hidden": {
+      backgroundColor: "#e8e8e8",
+    },
+    "&.show": {
+      backgroundColor: "#f7b000",
+    },
+  },
 });
 
 const sunInfo = style({

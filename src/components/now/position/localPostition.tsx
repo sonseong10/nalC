@@ -1,13 +1,14 @@
 import moment from "moment";
-import { KakaoApi } from "../../utils/HTTP";
+import { KakaoApi } from "../../../utils/HTTP";
 import { useEffect, useState } from "react";
-import { flexRow } from "../../styles/app.css";
 import {
   regionGroup,
   bookmarkButton,
   todayInfo,
   regionTextGroup,
 } from "./region.css";
+import Shimmer from "../../layout/shimmer/Shimmer";
+import { flexRow } from "../../../styles/app.css";
 
 interface RegionProps {
   status: {
@@ -96,11 +97,17 @@ function LocalPostion({ status }: RegionProps) {
       <strong className={todayInfo}>{moment().format("YYYY.MM.DD")}</strong>
 
       <div className={`${flexRow} ${regionTextGroup}`}>
-        <h2>{createAddress()}</h2>
+        {createAddress().length > 0 ? (
+          <>
+            <h2>{createAddress()}</h2>
 
-        <div>
-          <button className={bookmarkButton} aria-label="미구독"></button>
-        </div>
+            <div>
+              <button className={bookmarkButton} aria-label="미구독"></button>
+            </div>
+          </>
+        ) : (
+          <Shimmer />
+        )}
       </div>
     </div>
   );

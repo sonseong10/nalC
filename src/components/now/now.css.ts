@@ -1,21 +1,33 @@
 import { style } from "@vanilla-extract/css";
 
+const loadingBox = style({
+  position: "relative",
+  minHeight: "200px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  backgroundColor: "#e8e8e8",
+  color: "#6b6b6b",
+});
+
 const weatherGroup = style({
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
   position: "relative",
 });
 
 const weatherImage = style({
   position: "absolute",
+  top: "50%",
+  left: "42%",
+  display: "block",
   width: "96px",
-  top: "-16px",
-  left: "32%",
+  transform: "translate3d(-50%, -50%, 0)",
 });
 
 const tmp = style({
   position: "relative",
-  display: "inline-block",
-  width: "100%",
-  textAlign: "center",
   fontSize: "64px",
   fontWeight: "700",
   letterSpacing: "-3px",
@@ -38,4 +50,12 @@ const logo = style({
   width: "48px",
 });
 
-export { weatherGroup, weatherImage, tmp, infoGroup, infoDesc, logo };
+export {
+  loadingBox,
+  weatherGroup,
+  weatherImage,
+  tmp,
+  infoGroup,
+  infoDesc,
+  logo,
+};

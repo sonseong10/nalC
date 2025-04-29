@@ -7,12 +7,14 @@ import {
   logo,
   infoDesc,
   weatherImage,
+  loadingBox,
 } from "./now.css";
 import { flexRow } from "../../styles/app.css";
 import logoImg from "../../assets/koreaMeteorological.png";
-import LocalPostion from "../position/localPostition";
+import LocalPostion from "./position/localPostition";
 import useWeatherStore from "../../store";
 import { useShallow } from "zustand/shallow";
+import Shimmer from "../layout/shimmer/Shimmer";
 
 interface NowWeatherProps {
   status: {
@@ -30,11 +32,14 @@ function PositionWeather({ status }: NowWeatherProps) {
   return (
     <>
       {toDayInfo?.length <= 0 ? (
-        <span>정보 불러오는 중</span>
+        <div className={loadingBox}>
+          <Shimmer />
+          <span>정보 불러오는 중</span>
+        </div>
       ) : (
-        <div>
-          <div>
-            <div className={weatherGroup}>
+        <>
+          <div className={weatherGroup}>
+            <div>
               <img
                 className={weatherImage}
                 src={`https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt${
@@ -73,7 +78,7 @@ function PositionWeather({ status }: NowWeatherProps) {
               </div>
             </dl>
           </div>
-        </div>
+        </>
       )}
     </>
   );
@@ -82,14 +87,21 @@ function PositionWeather({ status }: NowWeatherProps) {
 function NowWeather({ status }: NowWeatherProps) {
   return (
     <div>
-      <LocalPostion status={status} />
       {status ? (
-        <PositionWeather status={status} />
+        <>
+          <LocalPostion status={status} />
+
+          <PositionWeather status={status} />
+        </>
       ) : (
-        <span>
-          현재 위치를 탐색 할 수 없습니다. 위치서비스를 활성화 하거나, 검색어를
-          입력해 주세요.
-        </span>
+        <div className={loadingBox}>
+          <Shimmer />
+          <p>
+            현재 위치를 탐색 할 수 없습니다.
+            <br />
+            위치서비스를 활성화 하거나, 지역을 설정해주세요.
+          </p>
+        </div>
       )}
     </div>
   );

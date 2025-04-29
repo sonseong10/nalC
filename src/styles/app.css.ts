@@ -11,6 +11,7 @@ const container = style({
   margin: "0 auto 10px",
   padding: "4px 8px",
   backgroundColor: "#fff",
+  overflow: "hidden",
 });
 
 const flexRow = style({

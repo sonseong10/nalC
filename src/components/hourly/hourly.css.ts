@@ -1,5 +1,11 @@
 import { style } from "@vanilla-extract/css";
 
+const loadingBox = style({
+  position: "relative",
+  minHeight: "230px",
+  backgroundColor: "#ededed",
+});
+
 const contentsBox = style({
   display: "flex",
   borderBottom: "1px solid #d1d1d1",
@@ -78,6 +84,7 @@ const afterTomorrow = style({
 });
 
 export {
+  loadingBox,
   contentsBox,
   hourlyKeyGroup,
   keyOptionGroup,

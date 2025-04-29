@@ -14,11 +14,13 @@ import {
   weatherImg,
   tomorrow,
   afterTomorrow,
+  loadingBox,
 } from "./hourly.css";
 import Title from "../layout/Title";
 import getKmaBaseDateTime from "../../utils/kmaTimetable";
 import useWeatherStore from "../../store";
 import { useShallow } from "zustand/shallow";
+import Shimmer from "../layout/shimmer/Shimmer";
 
 interface ForecastItem {
   baseDate: string;
@@ -152,7 +154,9 @@ function Hourly({ status }: IHourlyWeatherProps) {
   return (
     <>
       {weatherData.length === 0 ? (
-        <>로딩중입니다.</>
+        <div className={loadingBox}>
+          <Shimmer aria-label={"로딩중입니다"} />
+        </div>
       ) : (
         <div className={contentsBox}>
           <div className={hourlyKeyGroup}>

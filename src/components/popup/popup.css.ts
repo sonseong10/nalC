@@ -7,6 +7,7 @@ const popup = style({
   left: "50%",
   display: "block",
   padding: 0,
+  margin: 0,
   width: "calc(520px - 40px)",
   backgroundColor: "#fff",
   border: "none",

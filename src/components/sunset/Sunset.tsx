@@ -12,10 +12,11 @@ import {
   dot,
 } from "./sunset.css";
 import moment from "moment";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { WeatherApi } from "../../utils/HTTP";
 import useWeatherStore from "../../store/index";
 import { useShallow } from "zustand/shallow";
+import Shimmer from "../layout/shimmer/Shimmer";
 
 interface ISunsetInfoProps {
   status: {
@@ -25,6 +26,7 @@ interface ISunsetInfoProps {
 }
 
 function SunsetInfo({ status }: ISunsetInfoProps) {
+  const [loading, setLoading] = useState<boolean>(true);
   const { info, setSunInfo } = useWeatherStore(
     useShallow((state) => ({
       info: state.info,
@@ -44,6 +46,7 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
           latitude: status.latitude,
           dnYn: "Y",
         };
+        setLoading(true);
         await WeatherApi.get(loaction, { params })
           .then((res) => {
             const item = res.data?.response?.body?.items?.item;
@@ -52,42 +55,39 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
               set: moment(item?.sunset.trim(), "HHmm").format("HH:mm"),
             });
           })
-          .catch((error) => console.error(error));
+          .catch((error) => console.error(error))
+          .finally(() => setLoading(false));
       };
       api();
     }
   }, [setSunInfo, status]);
 
-    const rotateDeg = useMemo(() => {
-      const now = moment();
-      const sunrise = moment(info?.inc, "HH:mm");
-      const sunset = moment(info?.set, "HH:mm");
+  const rotateDeg = useMemo(() => {
+    const now = moment();
+    const sunrise = moment(info?.inc, "HH:mm");
+    const sunset = moment(info?.set, "HH:mm");
 
-      if (now.isBefore(sunrise)) {
-        return { dot: 0, bar: 42 };
-      }
-      if (now.isAfter(sunset)) {
-        return { dot: 180, bar: 224 };
-      }
+    if (now.isBefore(sunrise)) {
+      return { dot: 0, bar: 42 };
+    }
+    if (now.isAfter(sunset)) {
+      return { dot: 180, bar: 320 };
+    }
 
-      const totalMinutes = sunset.diff(sunrise, "minutes");
-      const passedMinutes = now.diff(sunrise, "minutes");
-      const progress = Math.min(Math.max(passedMinutes / totalMinutes, 0), 1);
+    const totalMinutes = sunset.diff(sunrise, "minutes");
+    const passedMinutes = now.diff(sunrise, "minutes");
+    const progress = Math.min(Math.max(passedMinutes / totalMinutes, 0), 1);
 
-      return {
-        dot: progress * 180,
-        bar: progress * 224,
-      };
-    }, [info]);
-
-
-    
-
+    return {
+      dot: progress * 180,
+      bar: progress * 310,
+    };
+  }, [info]);
 
   return (
-    <div className={box}>
-      {!info ? (
-        <></>
+    <div className={`${box} ${loading || !info ? "hidden" : "show"}`}>
+      {loading || !info ? (
+        <Shimmer />
       ) : (
         <>
           <div className={sunChart}>
@@ -138,7 +138,7 @@ function Sunset(props: ISunsetInfoProps) {
       <p className="offer_area">
         <a href="https://www.kasi.re.kr/" target="_blank" rel="noreferrer">
           한국천문연구원
-        </a>{" "}
+        </a>
         발표
       </p>
     </>
