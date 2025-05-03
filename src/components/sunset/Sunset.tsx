@@ -62,27 +62,30 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
     }
   }, [setSunInfo, status]);
 
-  const rotateDeg = useMemo(() => {
-    const now = moment();
-    const sunrise = moment(info?.inc, "HH:mm");
-    const sunset = moment(info?.set, "HH:mm");
+const rotateDeg = useMemo(() => {
+  if (!info?.inc || !info?.set) return { dot: 0, bar: 45 };
 
-    if (now.isBefore(sunrise)) {
-      return { dot: 0, bar: 42 };
-    }
-    if (now.isAfter(sunset)) {
-      return { dot: 180, bar: 320 };
-    }
+  const GAP = 45;
 
-    const totalMinutes = sunset.diff(sunrise, "minutes");
-    const passedMinutes = now.diff(sunrise, "minutes");
-    const progress = Math.min(Math.max(passedMinutes / totalMinutes, 0), 1);
+  const now = moment();
+  const sunrise = moment(info.inc, "HH:mm");
+  const sunset = moment(info.set, "HH:mm");
 
-    return {
-      dot: progress * 180,
-      bar: progress * 310,
-    };
-  }, [info]);
+  // 자정 넘는 경우 보정
+  if (sunset.isBefore(sunrise)) sunset.add(1, "day");
+
+  if (now.isBefore(sunrise)) return { dot: 0, bar: GAP };
+  if (now.isAfter(sunset)) return { dot: 180, bar: 225 };
+
+  const total = sunset.diff(sunrise, "seconds");
+  const passed = now.diff(sunrise, "seconds");
+  const progress = passed / total;
+
+  return {
+    dot: progress * 180,
+    bar: progress * 180 + GAP,
+  };
+}, [info]);
 
   return (
     <div className={`${box} ${loading || !info ? "hidden" : "show"}`}>
