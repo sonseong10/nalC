@@ -127,7 +127,7 @@ const useWeatherData = (
 
   useEffect(() => {
     const init = async () => {
-      if (info && status && !hasFetchedRef.current) {
+      if (!hasFetchedRef.current && status && info.inc) {
         hasFetchedRef.current = true;
         await fetchWeatherData(status).then((data) => {
           if (data) {
