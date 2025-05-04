@@ -93,7 +93,7 @@ const progressBar = style({
     position: "absolute",
     bottom: 0,
     left: 0,
-    zIndex: "10",
+    zIndex: "2",
     width: "7px",
     height: "7px",
     borderRadius: "50%",
@@ -105,7 +105,7 @@ const progressBar = style({
     position: "absolute",
     bottom: 0,
     right: 0,
-    zIndex: "10",
+    zIndex: "2",
     width: "7px",
     height: "7px",
     borderRadius: "50%",
@@ -134,7 +134,7 @@ const dot = style({
   position: "absolute",
   height: "264px",
   width: "264px",
-  zIndex: 100,
+  zIndex: 3,
 
   selectors: {
     "&:after": {

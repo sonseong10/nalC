@@ -8,6 +8,7 @@ const blind = style({
   height: "100vh",
   backgroundColor: "rgba(0,0,0,0.4)",
   cursor: "pointer",
+  zIndex: 10,
 });
 
 export { blind };
