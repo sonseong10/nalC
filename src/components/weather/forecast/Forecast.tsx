@@ -1,6 +1,6 @@
 import { memo, useEffect, useState } from "react";
-import { WeatherApi } from "../../utils/HTTP";
-import Title from "../layout/Title";
+import { WeatherApi } from "../../../utils/HTTP";
+import Title from "../../layout/Title";
 import moment from "moment";
 import { forecastList, info } from "./forecast.css";
 

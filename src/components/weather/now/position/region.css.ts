@@ -1,5 +1,5 @@
 import { style } from "@vanilla-extract/css";
-import SVG from "../../../styles/icon";
+import SVG from "../../../../styles/icon";
 
 const regionGroup = style({
   paddingTop: "24px",

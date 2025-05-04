@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { container, flexRow, footer, main } from "./styles/app.css.ts";
-import NowWeather from "./components/now/now.tsx";
+import NowWeather from "./components/weather/now/now.tsx";
 import Header from "./components/layout/header.tsx";
-import HourlySection from "./components/hourly/WeatherHourly.tsx";
-import Sunset from "./components/sunset/Sunset.tsx";
+import HourlySection from "./components/weather/hourly/WeatherHourly.tsx";
+import Sunset from "./components/weather/sunset/Sunset.tsx";
 import Popup from "./components/popup/Popup.tsx";
 import Blind from "./components/layout/blind/Blind.tsx";
 import { useBlindAction } from "./components/layout/blind/blind.ts";
-import Forecast from "./components/forecast/Forecast.tsx";
+import Forecast from "./components/weather/forecast/Forecast.tsx";
 
 const useInitLocation = () => {
   const [status, setLocation] = useState<null | {

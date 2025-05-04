@@ -1,4 +1,4 @@
-import Title from "../layout/Title";
+import Title from "../../layout/Title";
 import {
   box,
   sunInfo,
@@ -13,10 +13,10 @@ import {
 } from "./sunset.css";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
-import { WeatherApi } from "../../utils/HTTP";
-import useWeatherStore from "../../store/index";
+import { WeatherApi } from "../../../utils/HTTP";
+import useWeatherStore from "../../../store/index";
 import { useShallow } from "zustand/shallow";
-import Shimmer from "../layout/shimmer/Shimmer";
+import Shimmer from "../../layout/shimmer/Shimmer";
 
 interface ISunsetInfoProps {
   status: {
@@ -62,30 +62,30 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
     }
   }, [setSunInfo, status]);
 
-const rotateDeg = useMemo(() => {
-  if (!info?.inc || !info?.set) return { dot: 0, bar: 45 };
+  const rotateDeg = useMemo(() => {
+    if (!info?.inc || !info?.set) return { dot: 0, bar: 45 };
 
-  const GAP = 45;
+    const GAP = 45;
 
-  const now = moment();
-  const sunrise = moment(info.inc, "HH:mm");
-  const sunset = moment(info.set, "HH:mm");
+    const now = moment();
+    const sunrise = moment(info.inc, "HH:mm");
+    const sunset = moment(info.set, "HH:mm");
 
-  // 자정 넘는 경우 보정
-  if (sunset.isBefore(sunrise)) sunset.add(1, "day");
+    // 자정 넘는 경우 보정
+    if (sunset.isBefore(sunrise)) sunset.add(1, "day");
 
-  if (now.isBefore(sunrise)) return { dot: 0, bar: GAP };
-  if (now.isAfter(sunset)) return { dot: 180, bar: 225 };
+    if (now.isBefore(sunrise)) return { dot: 0, bar: GAP };
+    if (now.isAfter(sunset)) return { dot: 180, bar: 225 };
 
-  const total = sunset.diff(sunrise, "seconds");
-  const passed = now.diff(sunrise, "seconds");
-  const progress = passed / total;
+    const total = sunset.diff(sunrise, "seconds");
+    const passed = now.diff(sunrise, "seconds");
+    const progress = passed / total;
 
-  return {
-    dot: progress * 180,
-    bar: progress * 180 + GAP,
-  };
-}, [info]);
+    return {
+      dot: progress * 180,
+      bar: progress * 180 + GAP,
+    };
+  }, [info]);
 
   return (
     <div className={`${box} ${loading || !info ? "hidden" : "show"}`}>

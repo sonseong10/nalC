@@ -1,7 +1,7 @@
 import moment from "moment";
 import { useEffect, useRef, useState } from "react";
-import { WeatherApi } from "../../utils/HTTP";
-import dfs_xy_conv from "../../utils/position";
+import { WeatherApi } from "../../../utils/HTTP";
+import dfs_xy_conv from "../../../utils/position";
 import {
   card,
   contentsBox,
@@ -16,11 +16,11 @@ import {
   afterTomorrow,
   loadingBox,
 } from "./hourly.css";
-import Title from "../layout/Title";
-import getKmaBaseDateTime from "../../utils/kmaTimetable";
-import useWeatherStore from "../../store";
+import Title from "../../layout/Title";
+import getKmaBaseDateTime from "../../../utils/kmaTimetable";
+import useWeatherStore from "../../../store";
 import { useShallow } from "zustand/shallow";
-import Shimmer from "../layout/shimmer/Shimmer";
+import Shimmer from "../../layout/shimmer/Shimmer";
 
 interface ForecastItem {
   baseDate: string;

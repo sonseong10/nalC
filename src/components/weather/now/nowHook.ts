@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import dfs_xy_conv from "../../utils/position";
-import { WeatherApi } from "../../utils/HTTP";
+import dfs_xy_conv from "../../../utils/position";
+import { WeatherApi } from "../../../utils/HTTP";
 import moment from "moment";
 
 function adjustMinutes(time: moment.Moment): string {

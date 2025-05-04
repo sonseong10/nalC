@@ -1,5 +1,5 @@
 import moment from "moment";
-import { KakaoApi } from "../../../utils/HTTP";
+import { KakaoApi } from "../../../../utils/HTTP";
 import { useEffect, useState } from "react";
 import {
   regionGroup,
@@ -7,7 +7,7 @@ import {
   todayInfo,
   regionTextGroup,
 } from "./region.css";
-import Shimmer from "../../layout/shimmer/Shimmer";
+import Shimmer from "../../../layout/shimmer/Shimmer";
 import { flexRow } from "../../../styles/app.css";
 
 interface RegionProps {

@@ -9,12 +9,12 @@ import {
   weatherImage,
   loadingBox,
 } from "./now.css";
-import { flexRow } from "../../styles/app.css";
+import { flexRow } from "../../../styles/app.css";
 import logoImg from "../../assets/koreaMeteorological.png";
 import LocalPostion from "./position/localPostition";
-import useWeatherStore from "../../store";
+import useWeatherStore from "../../../store";
 import { useShallow } from "zustand/shallow";
-import Shimmer from "../layout/shimmer/Shimmer";
+import Shimmer from "../../layout/shimmer/Shimmer";
 
 interface NowWeatherProps {
   status: {
