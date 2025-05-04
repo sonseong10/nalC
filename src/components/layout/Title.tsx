@@ -1,10 +1,11 @@
 interface ITitleProps {
   text: string;
+  className?: string;
 }
 
-function Title({ text }: ITitleProps) {
+function Title({ text, className }: ITitleProps) {
   return (
-    <div>
+    <div className={className}>
       <h2>{text}</h2>
     </div>
   );
