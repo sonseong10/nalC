@@ -7,6 +7,7 @@ import Sunset from "./components/sunset/Sunset.tsx";
 import Popup from "./components/popup/Popup.tsx";
 import Blind from "./components/layout/blind/Blind.tsx";
 import { useBlindAction } from "./components/layout/blind/blind.ts";
+import Forecast from "./components/forecast/Forecast.tsx";
 
 const useInitLocation = () => {
   const [status, setLocation] = useState<null | {
@@ -81,21 +82,21 @@ function Footer() {
 
 function Main() {
   const { status } = useInitLocation();
-  const layout = [
-    <NowWeather status={status} />,
-    <HourlySection status={status} />,
-    <Sunset status={status} />,
-  ];
 
   return (
     <main>
-      {layout.map((component, index) => {
-        return (
-          <section className={container} key={index}>
-            {component}
-          </section>
-        );
-      })}
+      <section className={container}>
+        <NowWeather status={status} />
+      </section>
+      <section className={container}>
+        <HourlySection status={status} />
+      </section>
+      <section className={container}>
+        <Forecast />
+      </section>
+      <section className={container}>
+        <Sunset status={status} />
+      </section>
     </main>
   );
 }
