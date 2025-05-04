@@ -1,5 +1,5 @@
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { WeatherApi } from "../../utils/HTTP";
 import dfs_xy_conv from "../../utils/position";
 import {
@@ -123,26 +123,35 @@ const useWeatherData = (
     useShallow((state) => ({ info: state.info }))
   );
 
+  const hasFetchedRef = useRef(false);
+
   useEffect(() => {
-    if (status && info) {
-      fetchWeatherData(status).then((data) => {
-        if (data) {
-          const updatedData = data.map((group) =>
-            group.map((item) => ({
-              ...item,
-              isNight:
-                moment(item.fcstTime, "HHmm").isAfter(
-                  moment(info.set, "HH:mm")
-                ) ||
-                moment(item.fcstTime, "HHmm").isBefore(
-                  moment(info.inc, "HH:mm")
-                ),
-            }))
-          );
-          setWeatherData(updatedData);
-        }
-      });
-    }
+    const init = async () => {
+      if (info && status && !hasFetchedRef.current) {
+        hasFetchedRef.current = true;
+        await fetchWeatherData(status).then((data) => {
+          if (data) {
+            const updatedData = data.map((group) =>
+              group.map((item) => ({
+                ...item,
+                isNight:
+                  moment(item.fcstTime, "HHmm").isAfter(
+                    moment(info.set, "HH:mm")
+                  ) ||
+                  moment(item.fcstTime, "HHmm").isBefore(
+                    moment(info.inc, "HH:mm")
+                  ),
+              }))
+            );
+            setWeatherData(updatedData);
+          }
+        });
+      } else {
+        hasFetchedRef.current = false;
+      }
+    };
+
+    init();
   }, [status, info]);
 
   return { weatherData };
