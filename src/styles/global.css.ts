@@ -35,3 +35,12 @@ globalStyle("p.offer_area", {
   color: "#767678",
   fontSize: "12px",
 });
+
+globalStyle("*.hidden", {
+  position: "absolute",
+  width: "1px",
+  height: "1px",
+  fontSize: "1px",
+  opacity: 0,
+  zIndex: -1,
+});

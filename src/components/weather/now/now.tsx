@@ -10,11 +10,12 @@ import {
   loadingBox,
 } from "./now.css";
 import { flexRow } from "../../../styles/app.css";
-import logoImg from "../../assets/koreaMeteorological.png";
+import logoImg from "../../../assets/koreaMeteorological.png";
 import LocalPostion from "./position/localPostition";
 import useWeatherStore from "../../../store";
 import { useShallow } from "zustand/shallow";
 import Shimmer from "../../layout/shimmer/Shimmer";
+import Title from "../../layout/Title";
 
 interface NowWeatherProps {
   status: {
@@ -86,7 +87,9 @@ function PositionWeather({ status }: NowWeatherProps) {
 
 function NowWeather({ status }: NowWeatherProps) {
   return (
-    <div>
+    <>
+      <Title text="현재날씨" className="hidden" />
+
       {status ? (
         <>
           <LocalPostion status={status} />
@@ -103,7 +106,7 @@ function NowWeather({ status }: NowWeatherProps) {
           </p>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

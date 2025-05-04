@@ -28,6 +28,7 @@ const weatherImage = style({
 
 const tmp = style({
   position: "relative",
+  bottom: -4,
   fontSize: "64px",
   fontWeight: "700",
   letterSpacing: "-3px",
