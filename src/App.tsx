@@ -10,12 +10,19 @@ import { useBlindAction } from "./components/layout/blind/blind.ts";
 import Forecast from "./components/weather/forecast/Forecast.tsx";
 
 const useInitLocation = () => {
-  const [status, setLocation] = useState<null | {
+  const [status, setLocation] = useState<{
     longitude: number;
     latitude: number;
-  }>(null);
+  } | null>(null);
 
-  function getLocation() {
+  const updateLocation = (location: {
+    longitude: number;
+    latitude: number;
+  }) => {
+    setLocation(location);
+  };
+
+  const getLocation = () => {
     // Geolocation API 지원 여부 확인
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -52,13 +59,13 @@ const useInitLocation = () => {
     } else {
       console.error("위치서비스 브라우저 미지원");
     }
-  }
+  };
 
   useEffect(() => {
     getLocation();
   }, []);
 
-  return { status };
+  return { status, updateLocation };
 };
 
 function Footer() {
@@ -80,9 +87,14 @@ function Footer() {
   );
 }
 
-function Main() {
-  const { status } = useInitLocation();
-
+function Main({
+  status,
+}: {
+  status: {
+    longitude: number;
+    latitude: number;
+  } | null;
+}) {
   return (
     <main>
       <section className={container}>
@@ -102,18 +114,23 @@ function Main() {
 }
 
 function App() {
+  const { status, updateLocation } = useInitLocation();
   const { isShow, change } = useBlindAction();
 
   return (
     <div className={main}>
       <Header blindChange={change} />
 
-      <Main />
+      <Main status={status} />
 
       <Footer />
 
       <Blind isShow={isShow} change={change} />
-      <Popup isShow={isShow} change={change} />
+      {isShow ? (
+        <Popup change={change} updateLocation={updateLocation} />
+      ) : (
+        <></>
+      )}
     </div>
   );
 }

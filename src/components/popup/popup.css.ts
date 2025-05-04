@@ -123,21 +123,46 @@ const addressName = style({
   color: "#828282",
 });
 
-const deleteButton = style({
-  height: "56px",
-  border: "none",
-  backgroundColor: `#fff`,
-  cursor: "pointer",
 
-  ":hover": {
-    color: "#ff4949",
-  },
-});
 
 const dataNone = style({
   padding: "16px",
   textAlign: "center",
   color: "gray",
+});
+
+const bookmarkGroup = style({
+  display: "flex",
+  margin: 0,
+  padding: "6px 10px",
+  overflowX: "auto",
+  listStyle: "none",
+
+  "::-webkit-scrollbar": {
+    display: "none",
+  },
+});
+
+const bookmarkItem = style({
+  position: "relative",
+  width: "max-content",
+
+  selectors: {
+    "&:not(:last-child)": {
+      marginRight: "6px",
+    },
+  },
+});
+
+const bookmarkButton = style({
+  border: "none",
+  width: "max-content",
+  height: "32px",
+  padding: "4px 10px",
+  borderRadius: "24px",
+  backgroundColor: "#f4f6f8",
+  color: "#1d1d1d",
+  cursor: "pointer",
 });
 
 export {
@@ -153,6 +178,8 @@ export {
   itemButton,
   placeName,
   addressName,
-  deleteButton,
   dataNone,
+  bookmarkGroup,
+  bookmarkItem,
+  bookmarkButton,
 };

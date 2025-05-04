@@ -1,6 +1,5 @@
 import moment from "moment";
-import { KakaoApi } from "../../../../utils/HTTP";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   regionGroup,
   bookmarkButton,
@@ -9,6 +8,7 @@ import {
 } from "./region.css";
 import Shimmer from "../../../layout/shimmer/Shimmer";
 import { flexRow } from "../../../../styles/app.css";
+import { regionSearch } from "../../../../utils/regionSearch";
 
 interface RegionProps {
   status: {
@@ -17,60 +17,13 @@ interface RegionProps {
   } | null;
 }
 
-interface IResKakaoGeoMap {
-  documents: {
-    region_type: "B" | "H";
-    address_name: string;
-    region_1depth_name: string;
-    region_2depth_name: string;
-    region_3depth_name: string;
-    region_4depth_name: string;
-    code: string;
-    x: number;
-    y: number;
-  }[];
-}
-
 interface IBookmarkData {
   name: string;
   latitude: number;
   longitude: number;
 }
 
-const regionSearch = async (status?: {
-  latitude: number;
-  longitude: number;
-}) => {
-  if (!status) {
-    return;
-  }
-
-  const res = await KakaoApi.get<IResKakaoGeoMap>(
-    `/v2/local/geo/coord2regioncode.json`,
-    {
-      params: {
-        x: status?.longitude,
-        y: status?.latitude,
-      },
-    }
-  )
-    .then((res) => {
-      const index = res?.data?.documents.findIndex(
-        (adress) => adress.region_type === "H"
-      );
-      if (index > -1) {
-        return res?.data?.documents[index];
-      }
-    })
-    .catch((error) => {
-      console.log(error);
-      return {};
-    });
-
-  return res;
-};
-
-const createAddress = (region: { [key: string]: string }) => {
+const createAddress = (region: { [key: string]: string | number }) => {
   const addressParts = [];
 
   for (let i = 1; i <= 4; i++) {
@@ -84,7 +37,7 @@ const createAddress = (region: { [key: string]: string }) => {
 };
 
 function LocalPostion({ status }: RegionProps) {
-  const [region, setRegion] = useState<{ [key: string]: string }>({});
+  const [region, setRegion] = useState<{ [key: string]: string | number }>({});
   const [isBookmark, setBookomark] = useState(false);
 
   useEffect(() => {
@@ -99,30 +52,30 @@ function LocalPostion({ status }: RegionProps) {
     }
   }, [status]);
 
-  const toggleBookmark = () => {
+  const toggleBookmark = useCallback(() => {
     const localData = localStorage.getItem("bookmarkList");
+    const currentName = createAddress(region);
+
     if (localData !== null) {
       const list: Array<IBookmarkData> = JSON.parse(localData);
-      if (!isBookmark) {
-        localStorage.setItem(
-          "bookmarkList",
-          JSON.stringify([{ name: createAddress(region), ...status }, ...list])
-        );
-      } else {
-        const newList = JSON.stringify(
-          list.filter((item) => item.name !== createAddress(region))
-        );
 
-        localStorage.setItem("bookmarkList", newList);
+      if (!isBookmark) {
+        const updatedList = [{ name: currentName, ...status }, ...list];
+        const slicedList = updatedList.slice(0, 7);
+        localStorage.setItem("bookmarkList", JSON.stringify(slicedList));
+      } else {
+        const newList = list.filter((item) => item.name !== currentName);
+        localStorage.setItem("bookmarkList", JSON.stringify(newList));
       }
     } else {
       localStorage.setItem(
         "bookmarkList",
-        JSON.stringify([{ name: createAddress(region), ...status }])
+        JSON.stringify([{ name: currentName, ...status }])
       );
     }
+
     setBookomark(!isBookmark);
-  };
+  }, [region, status, isBookmark]);
 
   useEffect(() => {
     const localData = localStorage.getItem("bookmarkList");
