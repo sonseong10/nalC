@@ -37,56 +37,7 @@ const detachableText = (str: string) => {
   };
 };
 
-// const useInitForecast = () => {
-//   const [forecast, setForecast] = useState<
-//     | {
-//         rainInfo: string;
-//         summary: string;
-//         details: string[];
-//         time: number;
-//         wn: string;
-//         wr: string;
-//       }
-//     | undefined
-//   >(undefined);
-//   const init = async () => {
-//     await WeatherApi.get<{
-//       response: {
-//         body: {
-//           items: {
-//             item: Array<{
-//               stnId: string;
-//               tmFc: number;
-//               wfSv1: string;
-//               wn: string;
-//               wr: string;
-//             }>;
-//           };
-//         };
-//       };
-//     }>("1360000/VilageFcstMsgService/getWthrSituation", {
-//       params,
-//     }).then((res) => {
-//       const data = res?.data?.response?.body?.items?.item?.[0];
-//       if (data) {
-//         const result = {
-//           ...detachableText(data.wfSv1),
-//           time: data.tmFc,
-//           wr: data.wr,
-//           wn: data.wn,
-//         };
-//         setForecast(result);
-//       }
-//     });
-//   };
-//   useEffect(() => {
-//     init();
-//   }, []);
-
-//   return { forecast };
-// };
-
-function ForecastInfo() {
+const useInitForecast = () => {
   const [forecast, setForecast] = useState<
     | {
         rainInfo: string;
@@ -98,6 +49,7 @@ function ForecastInfo() {
       }
     | undefined
   >(undefined);
+
   const init = async () => {
     await WeatherApi.get<{
       response: {
@@ -128,9 +80,17 @@ function ForecastInfo() {
       }
     });
   };
+
   useEffect(() => {
     init();
   }, []);
+
+  return { forecast };
+};
+
+function ForecastInfo() {
+  const { forecast } = useInitForecast();
+
   return (
     <>
       {forecast && (
