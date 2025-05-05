@@ -9,7 +9,7 @@ const popup = style({
   display: "block",
   padding: 0,
   margin: 0,
-  width: "calc(520px - 40px)",
+  width: "calc(100vw - 20px)",
   backgroundColor: vars.colors.brightness.white,
   border: "none",
   borderRadius: "4px",
@@ -17,6 +17,12 @@ const popup = style({
   boxShadow: `4px 4px 20px ${vars.colors.rgba.primary}`,
   zIndex: 100,
   transform: "translate3d(-50%, -50%, 0)",
+
+  "@media": {
+    "screen and (min-width: 720px)": {
+      width: "calc(520px - 40px)",
+    },
+  },
 });
 
 const popupHeader = style({
