@@ -2,8 +2,11 @@ import { style } from "@vanilla-extract/css";
 import { vars } from "./globalTheme.css";
 
 const main = style({
-  minHeight: "100vh",
   backgroundColor: vars.colors.brightness[200],
+});
+
+const wrapper = style({
+  paddingTop: "61px",
 });
 
 const container = style({
@@ -32,5 +35,5 @@ const footer = style({
   fontSize: "14px",
 });
 
-export { main, container, flexRow, footer };
+export { wrapper, main, container, flexRow, footer };
 

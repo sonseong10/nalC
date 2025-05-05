@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { container, flexRow, footer, main } from "./styles/app.css.ts";
+import { container, flexRow, footer, main, wrapper } from "./styles/app.css.ts";
 import NowWeather from "./components/weather/now/now.tsx";
 import Header from "./components/layout/header.tsx";
 import HourlySection from "./components/weather/hourly/WeatherHourly.tsx";
@@ -97,7 +97,7 @@ function Main({
   } | null;
 }) {
   return (
-    <main>
+    <main className={wrapper}>
       <section className={container}>
         <NowWeather status={status} />
       </section>
