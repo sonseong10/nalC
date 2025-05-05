@@ -114,6 +114,25 @@ const fetchWeatherData = async (status: {
   }
 };
 
+const getTimeLabel = (fcstDate: string, fcstTime: string): string => {
+  const forecastDate = moment(fcstDate, "YYYYMMDD"); // fcstDate를 moment 객체로 변환
+  const forecastTime = moment(fcstTime, "HHmm"); // fcstTime을 moment 객체로 변환
+
+  const tomorrow = moment().add(1, "day");
+  const dayAfter = moment().add(2, "day");
+  const threeDaysLater = moment().add(3, "day");
+
+  // 만약 시간이 "00시"일 때 내일, 모레, 글피로 변경
+  if (forecastTime.hour() === 0) {
+    if (forecastDate.isSame(tomorrow, "day")) return "내일";
+    if (forecastDate.isSame(dayAfter, "day")) return "모레";
+    if (forecastDate.isSame(threeDaysLater, "day")) return "글피";
+  }
+
+  // 그 외 시간은 기존 방식대로 "00시" 형식으로 처리
+  return `${forecastTime.format("HH")}시`;
+};
+
 const useWeatherData = (
   status: { latitude: number; longitude: number } | null
 ) => {
@@ -160,6 +179,74 @@ const useWeatherData = (
 function Hourly({ status }: IHourlyWeatherProps) {
   const { weatherData } = useWeatherData(status);
 
+  const weatherCodeImage = (sky: number, pty: number, isSun: boolean) => {
+    console.log(isSun);
+
+    // 일몰 후에는 강수(PTY) 우선, 그 후 하늘 상태(SK)
+    if (isSun) {
+      if (pty !== 0) {
+        // 강수 있음
+        switch (pty) {
+          case 1:
+            return 31; // 비
+          case 2:
+            return 33; // 비/눈
+          case 3:
+            return 22; // 눈
+          case 5:
+            return 34; // 빗방울
+          case 6:
+            return 36; // 눈날림
+          case 7:
+            return 37; // 빗방울/눈날림
+          default:
+            return 2; // 강수 없음 → 맑음 또는 흐림 (기본값)
+        }
+      }
+
+      // 강수 없음일 때 하늘 상태(SK) 처리
+      switch (sky) {
+        case 3:
+          return 6; // 흐림
+        case 4:
+          return 7; // 매우 흐림
+        case 1:
+        default:
+          return 2; // 맑음
+      }
+    }
+
+    if (pty !== 0) {
+      switch (pty) {
+        case 1:
+          return 22; // 비
+        case 2:
+          return 24; // 비/눈
+        case 3:
+          return 23; // 눈
+        case 5:
+          return 25; // 빗방울
+        case 6:
+          return 27; // 눈날림
+        case 7:
+          return 28; // 빗방울/눈날림
+        default:
+          return 1; // 강수 없음 → 맑음 또는 흐림 (기본값)
+      }
+    }
+
+    // 강수 없음일 때 하늘 상태(SK) 처리
+    switch (sky) {
+      case 3:
+        return 5; // 흐림
+      case 4:
+        return 7; // 매우 흐림
+      case 1:
+      default:
+        return 1; // 맑음
+    }
+  };
+
   return (
     <>
       {weatherData.length === 0 ? (
@@ -178,7 +265,10 @@ function Hourly({ status }: IHourlyWeatherProps) {
           </div>
           <div className={hourlyGroup}>
             {weatherData.map((group, index) => {
-              const timeLabel = group[0].timeLabel;
+              const timeLabel = getTimeLabel(
+                group[0].fcstDate,
+                group[0].fcstTime
+              );
               const dayLabel = group[0].dayLabel;
               const categoryMap = new Map(
                 group.map((item) => [item.category, item])
@@ -201,9 +291,11 @@ function Hourly({ status }: IHourlyWeatherProps) {
                   {categoryMap.has("SKY") && (
                     <img
                       className={weatherImg}
-                      src={`https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt${
-                        categoryMap.get("SKY")!.isNight ? 2 : 1
-                      }.svg`}
+                      src={`https://ssl.pstatic.net/static/weather/image/icon_weather/ico_animation_wt${weatherCodeImage(
+                        Number(categoryMap.get("SKY")!.fcstValue),
+                        Number(categoryMap.get("PTY")!.fcstValue),
+                        categoryMap.get("SKY")!.isNight!
+                      )}.svg`}
                       alt="날씨"
                     />
                   )}
