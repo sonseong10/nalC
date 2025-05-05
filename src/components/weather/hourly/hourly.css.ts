@@ -1,14 +1,15 @@
 import { style } from "@vanilla-extract/css";
+import { vars } from "../../../styles/globalTheme.css";
 
 const loadingBox = style({
   position: "relative",
   minHeight: "230px",
-  backgroundColor: "#ededed",
+  backgroundColor: vars.colors.brightness[300],
 });
 
 const contentsBox = style({
   display: "flex",
-  borderBottom: "1px solid #d1d1d1",
+  borderBottom: `1px solid ${vars.colors.brightness[300]}`,
 });
 
 const hourlyKeyGroup = style({
@@ -17,7 +18,7 @@ const hourlyKeyGroup = style({
   justifyContent: "space-between",
   alignItems: "center",
   padding: "8px 0 16px",
-  borderRight: "1px solid #ddd",
+  borderRight: `1px solid ${vars.colors.brightness[300]}`,
   flex: "0 0 80px",
 });
 
@@ -25,7 +26,7 @@ const keyOptionGroup = style({
   display: "flex",
   flexDirection: "column",
   fontSize: "12px",
-  color: "#555",
+  color: vars.colors.brightness[600],
 });
 
 const keyOption = style({
@@ -53,7 +54,7 @@ const card = style({
 
   selectors: {
     "&:not(:last-child)": {
-      borderRight: "1px solid #ddd",
+      borderRight: `1px solid ${vars.colors.brightness[300]}`,
     },
   },
 });
@@ -68,7 +69,6 @@ const FontBase = style({
   margin: "6px 0",
   fontSize: "14px",
   fontWeight: 700,
-  color: "#222",
 });
 
 const vec = style({
@@ -76,11 +76,11 @@ const vec = style({
 });
 
 const tomorrow = style({
-  color: "#7a59f1",
+  color: vars.colors.blue[900],
 });
 
 const afterTomorrow = style({
-  color: "#45c1e0",
+  color: vars.colors.blue[700],
 });
 
 export {

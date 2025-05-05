@@ -8,6 +8,7 @@ import Popup from "./components/popup/Popup.tsx";
 import Blind from "./components/layout/blind/Blind.tsx";
 import { useBlindAction } from "./components/layout/blind/blind.ts";
 import Forecast from "./components/weather/forecast/Forecast.tsx";
+import "./styles/globalTheme.css.ts";
 
 const useInitLocation = () => {
   const [status, setLocation] = useState<{

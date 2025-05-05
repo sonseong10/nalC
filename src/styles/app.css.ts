@@ -1,8 +1,9 @@
 import { style } from "@vanilla-extract/css";
+import { vars } from "./globalTheme.css";
 
 const main = style({
   minHeight: "100vh",
-  backgroundColor: "#ededed",
+  backgroundColor: vars.colors.brightness[200],
 });
 
 const container = style({
@@ -10,7 +11,7 @@ const container = style({
   maxWidth: "520px",
   margin: "0 auto 10px",
   padding: "4px 8px",
-  backgroundColor: "#fff",
+  backgroundColor: vars.colors.brightness.white,
   overflow: "hidden",
 });
 

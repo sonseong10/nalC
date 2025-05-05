@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css";
+import { vars } from "../../../styles/globalTheme.css";
 
 const loadingBox = style({
   position: "relative",
@@ -6,8 +7,8 @@ const loadingBox = style({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  backgroundColor: "#e8e8e8",
-  color: "#6b6b6b",
+  backgroundColor: vars.colors.brightness[300],
+  color: vars.colors.brightness[500],
 });
 
 const weatherGroup = style({
@@ -28,7 +29,6 @@ const weatherImage = style({
 
 const tmp = style({
   position: "relative",
-  bottom: -4,
   fontSize: "64px",
   fontWeight: "700",
   letterSpacing: "-3px",
@@ -39,7 +39,7 @@ const infoGroup = style({
   justifyContent: "start",
   alignItems: "center",
   marginTop: "48px",
-  color: "#767678",
+  color: vars.colors.brightness[500],
   fontSize: "12px",
 });
 

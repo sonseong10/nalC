@@ -1,19 +1,20 @@
 import { style } from "@vanilla-extract/css";
+import { vars } from "../../../styles/globalTheme.css";
 
 const box = style({
   position: "relative",
   padding: "38px",
   minBlockSize: "210px",
-  backgroundColor: "#ffb900",
+  backgroundColor: vars.colors.yellow[600],
   borderRadius: "10px",
-  color: "#fff",
+  color: vars.colors.brightness.white,
 
   selectors: {
     "&.hidden": {
-      backgroundColor: "#e8e8e8",
+      backgroundColor: vars.colors.brightness[300],
     },
     "&.show": {
-      backgroundColor: "#f7b000",
+      backgroundColor: vars.colors.yellow[500],
     },
   },
 });
@@ -54,7 +55,7 @@ const iconArea = style({
       backgroundRepeat: "no-repeat",
       width: "73px",
       height: "3px",
-      backgroundColor: "#ffe361",
+      backgroundColor: vars.colors.yellow[300],
       transform: "translateX(-50%)",
       content: "",
     },
@@ -63,7 +64,14 @@ const iconArea = style({
 
 const timeTable = style({
   display: "flex",
-  fontSize: "18px",
+  fontSize: "16px",
+  alignItems: "center",
+
+  "@media": {
+    "screen and (min-width: 768px)": {
+      fontSize: "18px",
+    },
+  },
 });
 
 const timeValue = style({
@@ -97,7 +105,7 @@ const progressBar = style({
     width: "7px",
     height: "7px",
     borderRadius: "50%",
-    backgroundColor: "#fefbbd",
+    backgroundColor: vars.colors.yellow[100],
     content: "",
   },
 
@@ -109,7 +117,7 @@ const progressBar = style({
     width: "7px",
     height: "7px",
     borderRadius: "50%",
-    backgroundColor: "#ea9000",
+    backgroundColor: vars.colors.yellow[600],
     content: "",
   },
 });
@@ -125,9 +133,9 @@ const bar = style({
   width: "264px",
   height: "264px",
   borderRadius: "50%",
-  border: "7px solid #ea9000",
-  borderBottomColor: "#fefbbd",
-  borderRightColor: "#fefbbd",
+  border: `7px solid ${vars.colors.yellow[600]}`,
+  borderBottomColor: vars.colors.yellow[100],
+  borderRightColor: vars.colors.yellow[100],
 });
 
 const dot = style({
@@ -144,9 +152,9 @@ const dot = style({
       width: "42px",
       height: "42px",
       display: "block",
-      backgroundColor: "#fffca5",
+      backgroundColor: vars.colors.yellow[200],
       borderRadius: "21px",
-      border: "5px solid #feda39",
+      border: `5px solid ${vars.colors.yellow[400]}`,
       boxSizing: "border-box",
       transform: "translateY(-50%)",
       content: "",

@@ -1,3 +1,4 @@
+import { MouseEvent } from "react";
 import { blind } from "./blind.css";
 
 interface IBlindProps {
@@ -6,20 +7,13 @@ interface IBlindProps {
 }
 
 function Blind({ isShow, change }: IBlindProps) {
+  const onClickLayer = (e: MouseEvent) => {
+    e.preventDefault();
+    change();
+  };
+
   return (
-    <>
-      {isShow ? (
-        <div
-          className={blind}
-          onClick={(e) => {
-            e.preventDefault();
-            change();
-          }}
-        ></div>
-      ) : (
-        <></>
-      )}
-    </>
+    <>{isShow ? <div className={blind} onClick={onClickLayer}></div> : null}</>
   );
 }
 

@@ -1,5 +1,6 @@
 import { style } from "@vanilla-extract/css";
 import SVG from "../../../../styles/icon";
+import { vars } from "../../../../styles/globalTheme.css";
 
 const regionGroup = style({
   // paddingTop: "24px",
@@ -16,15 +17,15 @@ const bookmarkButton = style({
   border: "none",
   width: "36px",
   height: "36px",
-  background: `url(${SVG.Star("#e8e8e8")}) no-repeat center center`,
+  background: `url(${SVG.Star("#E0E0E0")}) no-repeat center center`,
   backgroundSize: "22px 22px",
-  backgroundColor: "#fff",
+  backgroundColor: vars.colors.brightness.white,
   cursor: "pointer",
   boxSizing: "border-box",
 
   selectors: {
     "&.isActive": {
-      background: `url(${SVG.Star("#ffc92c")}) no-repeat center center`,
+      background: `url(${SVG.Star("#feda39")}) no-repeat center center`,
       backgroundSize: "22px 22px",
     },
   },

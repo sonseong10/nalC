@@ -1,22 +1,33 @@
 import { style } from "@vanilla-extract/css";
 import SVG from "../../styles/icon";
+import { vars } from "../../styles/globalTheme.css";
 
 const header = style({
+  position: "fixed",
+  left: "50%",
   display: "flex",
   justifyContent: "space-between",
   alignItems: "center",
   padding: "4px 8px",
   height: "60px",
-  maxWidth: "520px",
+  width: "100vw",
   margin: "0 auto",
-  backgroundColor: "#fff",
-  borderBottom: "1px solid #ddd",
+  backgroundColor: vars.colors.brightness.white,
+  borderBottom: `1px solid ${vars.colors.brightness[200]}`,
+  transform: "translateX(-50%)",
+  zIndex: vars.zIndex.header,
+
+  "@media": {
+    "screen and (min-width: 519px)": {
+      width: "520px",
+    },
+  },
 });
 
 const logo = style({
   margin: 0,
   fontSize: "24px",
-  background: "url('../../../public/favicon.svg') no-repeat center center",
+  background: "url('/favicon.svg') no-repeat center center",
   color: "transparent",
   userSelect: "none",
 });
@@ -30,7 +41,7 @@ const searchButton = style({
   backgroundColor: "transparent",
   border: "none",
   borderRadius: "8px",
-  color: "#1d1d1d",
+  color: vars.colors.brightness[900],
   cursor: "pointer",
   boxSizing: "border-box",
 
@@ -46,7 +57,9 @@ const searchButton = style({
       display: "block",
       width: "36px",
       height: "36px",
-      background: `url(${SVG.Map("#1d1d1d")}) no-repeat center center`,
+      background: `url(${SVG.Map(
+        vars.colors.brightness[900]
+      )}) no-repeat center center`,
       backgroundSize: "18px 18px",
       content: "",
     },
