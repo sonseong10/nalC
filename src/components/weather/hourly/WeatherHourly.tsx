@@ -15,6 +15,7 @@ import {
   tomorrow,
   afterTomorrow,
   loadingBox,
+  swiperButton,
 } from "./hourly.css";
 import Title from "../../layout/Title";
 import getKmaBaseDateTime from "../../../utils/kmaTimetable";
@@ -176,76 +177,96 @@ const useWeatherData = (
   return { weatherData };
 };
 
-function Hourly({ status }: IHourlyWeatherProps) {
-  const { weatherData } = useWeatherData(status);
+const weatherCodeImage = (sky: number, pty: number, isSun: boolean) => {
+  // console.log(isSun);
 
-  const weatherCodeImage = (sky: number, pty: number, isSun: boolean) => {
-    console.log(isSun);
-
-    // 일몰 후에는 강수(PTY) 우선, 그 후 하늘 상태(SK)
-    if (isSun) {
-      if (pty !== 0) {
-        // 강수 있음
-        switch (pty) {
-          case 1:
-            return 31; // 비
-          case 2:
-            return 33; // 비/눈
-          case 3:
-            return 22; // 눈
-          case 5:
-            return 34; // 빗방울
-          case 6:
-            return 36; // 눈날림
-          case 7:
-            return 37; // 빗방울/눈날림
-          default:
-            return 2; // 강수 없음 → 맑음 또는 흐림 (기본값)
-        }
-      }
-
-      // 강수 없음일 때 하늘 상태(SK) 처리
-      switch (sky) {
-        case 3:
-          return 6; // 흐림
-        case 4:
-          return 7; // 매우 흐림
-        case 1:
-        default:
-          return 2; // 맑음
-      }
-    }
-
+  // 일몰 후에는 강수(PTY) 우선, 그 후 하늘 상태(SK)
+  if (isSun) {
     if (pty !== 0) {
+      // 강수 있음
       switch (pty) {
         case 1:
-          return 22; // 비
+          return 31; // 비
         case 2:
-          return 24; // 비/눈
+          return 33; // 비/눈
         case 3:
-          return 23; // 눈
+          return 22; // 눈
         case 5:
-          return 25; // 빗방울
+          return 34; // 빗방울
         case 6:
-          return 27; // 눈날림
+          return 36; // 눈날림
         case 7:
-          return 28; // 빗방울/눈날림
+          return 37; // 빗방울/눈날림
         default:
-          return 1; // 강수 없음 → 맑음 또는 흐림 (기본값)
+          return 2; // 강수 없음 → 맑음 또는 흐림 (기본값)
       }
     }
 
     // 강수 없음일 때 하늘 상태(SK) 처리
     switch (sky) {
       case 3:
-        return 5; // 흐림
+        return 6; // 흐림
       case 4:
         return 7; // 매우 흐림
       case 1:
       default:
-        return 1; // 맑음
+        return 2; // 맑음
     }
-  };
+  }
+
+  if (pty !== 0) {
+    switch (pty) {
+      case 1:
+        return 22; // 비
+      case 2:
+        return 24; // 비/눈
+      case 3:
+        return 23; // 눈
+      case 5:
+        return 25; // 빗방울
+      case 6:
+        return 27; // 눈날림
+      case 7:
+        return 28; // 빗방울/눈날림
+      default:
+        return 1; // 강수 없음 → 맑음 또는 흐림 (기본값)
+    }
+  }
+
+  // 강수 없음일 때 하늘 상태(SK) 처리
+  switch (sky) {
+    case 3:
+      return 5; // 흐림
+    case 4:
+      return 7; // 매우 흐림
+    case 1:
+    default:
+      return 1; // 맑음
+  }
+};
+
+function Hourly({ status }: IHourlyWeatherProps) {
+  const { weatherData } = useWeatherData(status);
+  const swiperRef = useRef<HTMLDivElement | null>(null);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
+  useEffect(() => {
+    const swiper = swiperRef.current;
+    if (!swiper) return;
+
+    const checkPosition = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = swiper;
+      setAtStart(scrollLeft === 0);
+      setAtEnd(scrollLeft + clientWidth >= scrollWidth - 1);
+    };
+
+    checkPosition();
+
+    swiper.addEventListener("scroll", checkPosition);
+
+    return () => swiper.removeEventListener("scroll", checkPosition);
+  }, [weatherData]);
 
   return (
     <>
@@ -255,6 +276,20 @@ function Hourly({ status }: IHourlyWeatherProps) {
         </div>
       ) : (
         <div className={contentsBox}>
+          {!atStart && (
+            <button
+              className={`${swiperButton} before`}
+              onClick={() => {
+                swiperRef.current!.scrollTo({
+                  left: swiperRef.current!.scrollLeft - 300,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <span aria-label="이전 시간으로 이동">{"<"}</span>
+            </button>
+          )}
+
           <div className={hourlyKeyGroup}>
             <span>오늘</span>
             <div className={keyOptionGroup}>
@@ -263,7 +298,7 @@ function Hourly({ status }: IHourlyWeatherProps) {
               <span className={keyOption}>바람 m/s</span>
             </div>
           </div>
-          <div className={hourlyGroup}>
+          <div className={hourlyGroup} ref={swiperRef}>
             {weatherData.map((group, index) => {
               const timeLabel = getTimeLabel(
                 group[0].fcstDate,
@@ -356,6 +391,20 @@ function Hourly({ status }: IHourlyWeatherProps) {
               );
             })}
           </div>
+
+          {!atEnd && (
+            <button
+              className={`${swiperButton} after`}
+              onClick={() => {
+                swiperRef.current!.scrollTo({
+                  left: swiperRef.current!.scrollLeft + 300,
+                  behavior: "smooth",
+                });
+              }}
+            >
+              <span aria-label="이후 시간으로 이동">{">"}</span>
+            </button>
+          )}
         </div>
       )}
     </>

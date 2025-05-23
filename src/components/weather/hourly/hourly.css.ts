@@ -1,4 +1,4 @@
-import { style } from "@vanilla-extract/css";
+import { globalStyle, style } from "@vanilla-extract/css";
 import { vars } from "../../../styles/globalTheme.css";
 
 const loadingBox = style({
@@ -8,6 +8,7 @@ const loadingBox = style({
 });
 
 const contentsBox = style({
+  position: "relative",
   display: "flex",
   borderBottom: `1px solid ${vars.colors.brightness[300]}`,
 });
@@ -83,6 +84,33 @@ const afterTomorrow = style({
   color: vars.colors.blue[700],
 });
 
+const swiperButton = style({
+  position: "absolute",
+  top: "50%",
+  display: "none",
+  width: "44px",
+  height: "44px",
+  borderRadius: "22px",
+  border: `1px solid ${vars.colors.brightness[300]}`,
+  backgroundColor: vars.colors.brightness.white,
+  cursor: "pointer",
+  transform: "translateY(-50%)",
+
+  selectors: {
+    "&.before": {
+      left: "56px",
+    },
+
+    "&.after": {
+      right: 0,
+    },
+  },
+});
+
+globalStyle(`${contentsBox}:hover button`, {
+  display: "block",
+});
+
 export {
   loadingBox,
   contentsBox,
@@ -96,4 +124,5 @@ export {
   vec,
   tomorrow,
   afterTomorrow,
+  swiperButton,
 };
