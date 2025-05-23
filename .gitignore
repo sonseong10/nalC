@@ -25,3 +25,11 @@ dist-ssr
 
 # env
 .env.*
+
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/patches
+.pnp.*
+.yarnrc.yml
