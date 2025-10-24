@@ -10,6 +10,7 @@ import {
   currentBar,
   bar,
   dot,
+  offerArea,
 } from "./sunset.css";
 import moment from "moment";
 import { useEffect, useMemo, useState } from "react";
@@ -27,6 +28,7 @@ interface ISunsetInfoProps {
 
 function SunsetInfo({ status }: ISunsetInfoProps) {
   const [loading, setLoading] = useState<boolean>(true);
+  const [apiDown, setApiDown] = useState<boolean>(false);
   const { info, setSunInfo } = useWeatherStore(
     useShallow((state) => ({
       info: state.info,
@@ -35,43 +37,51 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
   );
 
   useEffect(() => {
-    if (status) {
-      const loaction =
-        "/B090041/openapi/service/RiseSetInfoService/getLCRiseSetInfo";
+    if (!status) return;
 
-      const api = async () => {
-        const params = {
-          locdate: moment().format("YYYYMMDD"),
-          longitude: status.longitude,
-          latitude: status.latitude,
-          dnYn: "Y",
-        };
-        setLoading(true);
-        await WeatherApi.get(loaction, { params })
-          .then((res) => {
-            const item = res.data?.response?.body?.items?.item;
-            setSunInfo({
-              inc: moment(item?.sunrise.trim(), "HHmm").format("HH:mm"),
-              set: moment(item?.sunset.trim(), "HHmm").format("HH:mm"),
-            });
-          })
-          .catch((error) => console.error(error))
-          .finally(() => setLoading(false));
+    const KASI_URL =
+      "https://apis.data.go.kr/B090041/openapi/service/RiseSetInfoService/getLCRiseSetInfo";
+
+    const fetchKasiApi = async () => {
+      const params = {
+        serviceKey: process.env.NEXT_PUBLIC_WEATHER_API_KEY, // 공공데이터포털 인증키
+        locdate: moment().format("YYYYMMDD"),
+        longitude: status.longitude,
+        latitude: status.latitude,
+        dnYn: "Y",
       };
-      api();
-    }
+
+      setLoading(true);
+      try {
+        const res = await WeatherApi.get(KASI_URL, { params });
+        const item = res.data?.response?.body?.items?.item;
+
+        // 정상 데이터
+        setSunInfo({
+          inc: moment(item?.sunrise.trim(), "HHmm").format("HH:mm"),
+          set: moment(item?.sunset.trim(), "HHmm").format("HH:mm"),
+        });
+        setApiDown(false);
+      } catch (err: any) {
+        console.warn("KASI API 오류 → 대체 데이터 요청 시작");
+        setApiDown(true);
+        setSunInfo({ inc: "06:45", set: "17:52" });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchKasiApi();
   }, [setSunInfo, status]);
 
   const rotateDeg = useMemo(() => {
     if (!info?.inc || !info?.set) return { dot: 0, bar: 45 };
 
     const GAP = 45;
-
     const now = moment();
     const sunrise = moment(info.inc, "HH:mm");
     const sunset = moment(info.set, "HH:mm");
 
-    // 자정 넘는 경우 보정
     if (sunset.isBefore(sunrise)) sunset.add(1, "day");
 
     if (now.isBefore(sunrise)) return { dot: 0, bar: GAP };
@@ -127,6 +137,12 @@ function SunsetInfo({ status }: ISunsetInfoProps) {
               </dd>
             </dl>
           </div>
+
+          {apiDown && (
+            <p className={offerArea}>
+              현재 한국천문연구원 서버 복구 중으로 임시 데이터를 사용 중입니다.
+            </p>
+          )}
         </>
       )}
     </div>
@@ -141,8 +157,8 @@ function Sunset(props: ISunsetInfoProps) {
       <p className="offer_area">
         <a href="https://www.kasi.re.kr/" target="_blank" rel="noreferrer">
           한국천문연구원
-        </a>
-        발표
+        </a>{" "}
+        발표 (복구 중일 경우 임시데이터 대체)
       </p>
     </>
   );
