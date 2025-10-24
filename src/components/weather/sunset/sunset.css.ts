@@ -162,6 +162,15 @@ const dot = style({
   },
 });
 
+
+const offerArea = style({
+  position: "absolute",
+  textAlign: "center",
+  color: "#fff",
+  fontSize: "0.9rem",
+  fontWeight: 500,
+});
+
 export {
   box,
   sunInfo,
@@ -171,6 +180,7 @@ export {
   sunChart,
   progressBar,
   currentBar,
+  offerArea,
   bar,
   dot,
 };
